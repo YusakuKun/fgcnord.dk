@@ -14,7 +14,7 @@ const LINKS = [
   { to: "/om", label: "Om fællesskabet" },
 ];
 
-export const DISCORD_URL = "https://discord.gg/fgcnord";
+export const DISCORD_URL = "https://discord.gg/cX9P646RAG";
 
 export function DiscordIcon({ size = 20 }: { size?: number }) {
   return (
