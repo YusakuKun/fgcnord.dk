@@ -23,3 +23,5 @@
 
 /*.webp
   Cache-Control: public, max-age=3600, must-revalidate
+
+# deploy-trigger: ingen funktionel ændring
