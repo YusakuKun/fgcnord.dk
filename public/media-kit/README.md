@@ -7,7 +7,7 @@ Brug dette kit, når du omtaler eller promoterer FGC Nord.
 **FGC Nord** er Nordjyllands platform fighter-forening. Vi samles om Super Smash Bros. Melee, Super Smash Bros. Ultimate og Rivals of Aether 2 gennem weeklies, månedlige turneringer og sociale events i Aalborg.
 
 - **Website:** https://fgcnord.dk
-- **Discord:** https://discord.gg/fgcnord
+- **Discord:** https://discord.gg/cX9P646RAG
 - **Lokation:** Aalborg, Nordjylland
 
 ## Logoer

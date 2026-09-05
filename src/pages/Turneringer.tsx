@@ -391,7 +391,7 @@ export function Turneringer() {
                         Der er ingen planlagte events lige nu. Vi annoncerer weeklies og
                         turneringer løbende på{" "}
                         <a
-                          href="https://discord.gg/fgcnord"
+                          href="https://discord.gg/cX9P646RAG"
                           target="_blank"
                           rel="noreferrer"
                           className="font-bold text-brick underline underline-offset-2"

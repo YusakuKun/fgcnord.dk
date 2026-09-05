@@ -251,7 +251,7 @@ export function Home() {
               <p className="text-[16px] leading-[1.7] text-cream/90 md:text-[17px]">
                 Vi annoncerer weeklies og turneringer løbende — følg med på{" "}
                 <a
-                  href="https://discord.gg/fgcnord"
+                  href="https://discord.gg/cX9P646RAG"
                   className="font-bold text-brick-soft underline underline-offset-4"
                 >
                   Discord
