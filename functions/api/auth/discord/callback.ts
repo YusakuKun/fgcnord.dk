@@ -63,10 +63,11 @@ function redirect(location: string, cookies: string[] = []): Response {
 async function checkGuildMembership(
   ctx: ApiContext,
   discordUserId: string,
-): Promise<boolean | null> {
+): Promise<{ isMember: boolean; isAdmin: boolean } | null> {
   const botToken = ctx.env.DISCORD_BOT_TOKEN;
   const guildId = ctx.env.DISCORD_GUILD_ID;
   const roleId = ctx.env.DISCORD_MEMBER_ROLE_ID;
+  const adminRoleId = ctx.env.DISCORD_ADMIN_ROLE_ID;
   if (!botToken || !guildId) return null; // ikke konfigureret — lad være med at ændre status
   try {
     const res = await fetch(
@@ -74,13 +75,15 @@ async function checkGuildMembership(
       { headers: { Authorization: `Bot ${botToken}` } },
     );
     if (res.ok) {
+      const member = (await res.json()) as { roles?: string[] };
+      const roles = Array.isArray(member.roles) ? member.roles : [];
       // Medlemskab = medlemsrollen på serveren. Er rollen ikke konfigureret,
       // tæller rent server-medlemskab.
-      if (!roleId) return true;
-      const member = (await res.json()) as { roles?: string[] };
-      return Array.isArray(member.roles) && member.roles.includes(roleId);
+      const isMember = roleId ? roles.includes(roleId) : true;
+      const isAdmin = adminRoleId ? roles.includes(adminRoleId) : false;
+      return { isMember, isAdmin };
     }
-    if (res.status === 404) return false;
+    if (res.status === 404) return { isMember: false, isAdmin: false };
     return null; // andre fejl: rør ikke eksisterende status
   } catch {
     return null;
@@ -147,7 +150,9 @@ export async function onRequestGet(
     const user = (await userRes.json()) as DiscordUser;
 
     const username = user.global_name || user.username;
-    const isMember = await checkGuildMembership(ctx, user.id);
+    const guildCheck = await checkGuildMembership(ctx, user.id);
+    const isMember = guildCheck === null ? null : guildCheck.isMember;
+    const isAdmin = guildCheck?.isAdmin === true;
     const now = Date.now();
 
     let player = await ctx.env.DB.prepare(
@@ -159,8 +164,8 @@ export async function onRequestGet(
     if (!player) {
       const playerId = ulid();
       await ctx.env.DB.prepare(
-        `INSERT INTO players (id, discord_id, gamertag, discord_username, discord_avatar, is_member, member_since, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO players (id, discord_id, gamertag, discord_username, discord_avatar, is_member, is_admin, member_since, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
           playerId,
@@ -169,14 +174,16 @@ export async function onRequestGet(
           username,
           user.avatar ?? null,
           isMember === true ? 1 : 0,
+          isAdmin ? 1 : 0,
           isMember === true ? now : null,
           now,
         )
         .run();
       player = { id: playerId, discord_id: user.id, gamertag: username, created_at: now };
     } else {
-      // Opdatér profilfelter — og medlemsstatus, hvis vi kunne tjekke den
+      // Opdatér profilfelter + admin-rolle — og medlemsstatus, hvis vi kunne tjekke den
       if (isMember === null) {
+        // Kunne ikke tjekke serveren — rør hverken medlems- eller admin-status
         await ctx.env.DB.prepare(
           "UPDATE players SET discord_username = ?, discord_avatar = ? WHERE id = ?",
         )
@@ -184,15 +191,15 @@ export async function onRequestGet(
           .run();
       } else if (isMember) {
         await ctx.env.DB.prepare(
-          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 1, member_since = COALESCE(member_since, ?) WHERE id = ?",
+          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 1, is_admin = ?, member_since = COALESCE(member_since, ?) WHERE id = ?",
         )
-          .bind(username, user.avatar ?? null, now, player.id)
+          .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, now, player.id)
           .run();
       } else {
         await ctx.env.DB.prepare(
-          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 0, member_since = NULL WHERE id = ?",
+          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 0, is_admin = ?, member_since = NULL WHERE id = ?",
         )
-          .bind(username, user.avatar ?? null, player.id)
+          .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, player.id)
           .run();
       }
     }
