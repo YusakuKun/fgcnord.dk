@@ -7,12 +7,19 @@ import {
   requireAdmin,
 } from "../../lib/api";
 import { DISCORD_COLORS, notifyDiscord } from "../../lib/discord";
-import { computeTopRanks, syncRankRoles } from "../../lib/ranks";
+import { computeAllTopRanks, RANK_GAMES, syncRankRoles } from "../../lib/ranks";
+
+const gameLabels: Record<string, string> = {
+  melee: "Melee",
+  ultimate: "Ultimate",
+  roa2: "Rivals 2",
+};
 
 /**
  * POST /api/admin/sync-rank-roles — synkronisér Discord-rollerne #1–#8
- * med ranglisten. Kaldes manuelt fra /admin og automatisk hvert kvartal
- * via GitHub Actions (se .github/workflows/rank-roles.yml).
+ * for alle spil med deres respektive ranglister. Kaldes manuelt fra
+ * /admin og automatisk hvert kvartal via GitHub Actions
+ * (se .github/workflows/rank-roles.yml).
  */
 export async function onRequestPost(
   context: EventContext<Env, never, { ctx: ApiContext }>,
@@ -22,26 +29,27 @@ export async function onRequestPost(
   try {
     requireAdmin(ctx);
 
-    const top = await computeTopRanks(ctx.env.DB);
+    const topByGame = await computeAllTopRanks(ctx.env.DB);
     const result = await syncRankRoles(ctx.env, ctx.env.DB);
+
+    const sections = RANK_GAMES.map((game) => {
+      const list = topByGame[game];
+      if (list.length === 0) return `**${gameLabels[game] || game}**\nIngen ratede spillere endnu.`;
+      const lines = list.map(
+        (p) => `**#${p.rank}** ${p.gamertag} — ${p.rating} rating`,
+      );
+      return `**${gameLabels[game] || game}**\n${lines.join("\n")}`;
+    });
 
     await notifyDiscord(ctx.env, {
       title: "🏆 Rang-roller opdateret",
-      description:
-        top.length === 0
-          ? "Ingen spillere har nok ratede kampe endnu."
-          : top
-              .map(
-                (p) =>
-                  `**#${p.rank}** ${p.gamertag} — ${p.rating} rating (${p.game})`,
-              )
-              .join("\n"),
+      description: sections.join("\n\n"),
       color: DISCORD_COLORS.gold,
-      footer: { text: "FGC Nord rangliste · kvartalsvis sync" },
+      footer: { text: "FGC Nord rangliste · top 8 pr. spil · kvartalsvis sync" },
     });
 
     return json(
-      { success: true, top, ...result },
+      { success: true, top: topByGame, ...result },
       { headers: corsHeaders(origin) },
     );
   } catch (err) {
