@@ -64,6 +64,38 @@ export async function joinLobby(lobbyId: string) {
   }) as Promise<{ success: boolean }>;
 }
 
+/** Meld dig FRA lobbyen igen */
+export async function leaveLobby(lobbyId: string) {
+  return fetchJson(`/lobby/${encodeURIComponent(lobbyId)}/leave`, {
+    method: "POST",
+  }) as Promise<{ success: boolean }>;
+}
+
+/** Admin: fjern en spiller fra lobbyen (nøgle eller Discord @Admin-session) */
+export async function adminKickFromLobby(
+  adminKey: string,
+  lobbyId: string,
+  playerId: string,
+) {
+  const res = await fetch(`${API_BASE}/lobby/${encodeURIComponent(lobbyId)}/kick`, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      // Tom nøgle = brug Discord-sessionen (@Admin-rolle) i stedet
+      ...(adminKey ? { Authorization: `Bearer ${adminKey}` } : {}),
+    },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  const data = (await res.json().catch(() => ({
+    error: "Uventet svar fra serveren.",
+  }))) as { error?: string; success?: boolean; kicked?: string };
+  if (!res.ok) {
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+  return data as { success: boolean; kicked: string };
+}
+
 export async function challengePlayer(lobbyId: string, opponentId: string) {
   return fetchJson(`/lobby/${encodeURIComponent(lobbyId)}/matches`, {
     method: "POST",

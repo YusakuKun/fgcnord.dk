@@ -15,6 +15,7 @@ import {
   Swords,
   Trash2,
   Users,
+  UserX,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -37,7 +38,7 @@ import {
   type ImportResultsSummary,
 } from "@/lib/tournamentApi";
 import { getStartggEvents, type StartggEvent } from "@/lib/startggApi";
-import { getCurrentLobby, type LobbyState } from "@/lib/lobbyApi";
+import { adminKickFromLobby, getCurrentLobby, type LobbyState } from "@/lib/lobbyApi";
 
 const KEY_STORAGE = "fgc_admin_key";
 
@@ -288,6 +289,24 @@ export function Admin() {
     }
   };
 
+  const handleKick = async (playerId: string, gamertag: string) => {
+    if (!lobby) return;
+    if (!confirm(`Fjern ${gamertag} fra lobbyen "${lobby.title}"?`)) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await adminKickFromLobby(key, lobby.id, playerId);
+      setNotice(`${gamertag} er fjernet fra lobbyen.`);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunne ikke fjerne spilleren");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleImportResults = async () => {
     if (importSlug.trim().length < 5) {
       setError("Indsæt en start.gg event-slug (eller fuld URL).");
@@ -438,6 +457,7 @@ export function Admin() {
               Aftenens lobby
             </h2>
             {lobby ? (
+              <>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-sm font-bold">
                   <span className="mr-2 rounded-md bg-emerald-500 px-2 py-0.5 text-xs uppercase text-coal">Åben</span>
@@ -458,6 +478,33 @@ export function Admin() {
                   </Button>
                 </div>
               </div>
+              {lobby.attendees.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm font-bold text-ink/70">
+                    Fremmødte — brug listen som tilmeldingsgrundlag til start.gg:
+                  </p>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {lobby.attendees.map((a) => (
+                      <li
+                        key={a.id}
+                        className="flex items-center gap-1 rounded-lg border-2 border-ink bg-cream py-1 pl-3 pr-1 text-sm font-bold shadow-poster-sm"
+                      >
+                        {a.gamertag}
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void handleKick(a.id, a.gamertag)}
+                          title={`Fjern ${a.gamertag} fra lobbyen`}
+                          className="rounded-md p-1 text-brick hover:bg-brick hover:text-coal disabled:opacity-40"
+                        >
+                          <UserX className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              </>
             ) : (
               <div className="mt-4 flex flex-wrap items-end gap-3">
                 <div className="min-w-48 flex-1">
