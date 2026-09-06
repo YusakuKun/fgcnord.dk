@@ -75,6 +75,8 @@ function formatDateTime(ts: number | null): string {
 export function Admin() {
   const [key, setKey] = useState(() => sessionStorage.getItem(KEY_STORAGE) || "");
   const [keyInput, setKeyInput] = useState("");
+  const [discordAdmin, setDiscordAdmin] = useState(false);
+  const [meChecked, setMeChecked] = useState(false);
   const [tournaments, setTournaments] = useState<AdminTournament[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -98,8 +100,21 @@ export function Admin() {
   const [importGame, setImportGame] = useState("auto");
   const [sgEvents, setSgEvents] = useState<StartggEvent[] | null>(null);
 
+  const unlocked = key.length > 0 || discordAdmin;
+
+  // Er brugeren logget ind med Discord og har @Admin-rollen?
+  useEffect(() => {
+    fetch("/api/me", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { isAdmin?: boolean } | null) => {
+        if (data?.isAdmin) setDiscordAdmin(true);
+      })
+      .catch(() => {})
+      .finally(() => setMeChecked(true));
+  }, []);
+
   const load = useCallback(async () => {
-    if (!key) return;
+    if (!key && !discordAdmin) return;
     setError(null);
     try {
       const data = await adminListTournaments(key);
@@ -110,18 +125,18 @@ export function Admin() {
       setTournaments(null);
       setError(err instanceof Error ? err.message : "Kunne ikke hente turneringer");
     }
-  }, [key]);
+  }, [key, discordAdmin]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   useEffect(() => {
-    if (!key) return;
+    if (!key && !discordAdmin) return;
     getStartggEvents()
       .then((r) => setSgEvents(r.events))
       .catch(() => setSgEvents(null));
-  }, [key]);
+  }, [key, discordAdmin]);
 
   const unlock = () => {
     if (keyInput.trim().length < 8) {
@@ -321,7 +336,10 @@ export function Admin() {
   };
 
   /* ---------- Lås-skærm ---------- */
-  if (!key) {
+  if (!meChecked) {
+    return null; // tjekker om Discord-sessionen allerede er admin
+  }
+  if (!unlocked) {
     return (
       <>
         <PageHeader
@@ -366,6 +384,13 @@ export function Admin() {
                 <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 Del aldrig nøglen i chat eller på Discord. Tabet nulstiller
                 sessionen automatisk.
+              </p>
+              <p className="mt-3 border-t-2 border-ink/10 pt-3 text-center text-xs text-ink/60">
+                Har du @Admin-rollen på Discord?{" "}
+                <Link to="/bliv-medlem" className="font-bold text-brick underline">
+                  Log ind med Discord
+                </Link>{" "}
+                — så åbner panelet automatisk uden nøgle.
               </p>
             </motion.div>
           </div>
