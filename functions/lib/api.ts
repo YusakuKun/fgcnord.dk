@@ -98,5 +98,6 @@ export async function handleError(
     return error(err.message, err.status, corsHeaders(origin));
   }
   console.error("API error:", err);
-  return error("Der opstod en uventet fejl.", 500, corsHeaders(origin));
+  // MIDLERTIDIG DIAGNOSE — rulles tilbage så snart fejlen er fundet.
+  return error(`DIAG: ${String(err)}`, 500, corsHeaders(origin));
 }
