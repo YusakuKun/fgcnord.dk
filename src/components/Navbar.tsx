@@ -122,21 +122,21 @@ export function Navbar() {
         scrolled ? "shadow-[0_4px_0_#141413]" : ""
       }`}
     >
-      <div className="mx-auto flex h-[76px] max-w-[1200px] items-center justify-between px-5 md:px-6">
-        <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+      <div className="mx-auto flex h-[76px] max-w-[1400px] items-center justify-between gap-4 px-5 md:px-6">
+        <Link to="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
           <img src="/fgc5_light_transparent.png" alt="FGC Nord logo" className="h-11 w-auto" />
-          <span className="font-display text-xl uppercase tracking-[-0.01em] text-cream">FGC Nord</span>
+          <span className="whitespace-nowrap font-display text-xl uppercase tracking-[-0.01em] text-cream">FGC Nord</span>
         </Link>
 
         {/* Desktop navigation */}
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Hovedmenu">
+        <nav className="hidden items-center gap-5 xl:flex" aria-label="Hovedmenu">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               end={l.to === "/"}
               className={({ isActive }) =>
-                `relative text-[15px] font-semibold text-cream/85 transition-colors hover:text-brick ${
+                `relative whitespace-nowrap text-[15px] font-semibold text-cream/85 transition-colors hover:text-brick ${
                   isActive ? "after:absolute after:-bottom-[6px] after:left-0 after:h-[3px] after:w-full after:bg-brick" : "link-underline"
                 }`
               }
@@ -146,7 +146,7 @@ export function Navbar() {
           ))}
           <NavLink
             to="/bliv-medlem"
-            className="rounded-full border-[3px] border-ink bg-brick px-5 py-2 text-[15px] font-semibold uppercase tracking-[0.02em] text-ink shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-brick-soft hover:shadow-poster"
+            className="whitespace-nowrap rounded-full border-[3px] border-ink bg-brick px-5 py-2 text-[15px] font-semibold uppercase tracking-[0.02em] text-ink shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-brick-soft hover:shadow-poster"
           >
             Bliv medlem
           </NavLink>
@@ -155,7 +155,7 @@ export function Navbar() {
             target="_blank"
             rel="noreferrer"
             aria-label="FGC Nord på Discord"
-            className="text-cream/85 transition-all duration-200 hover:scale-110 hover:text-brick"
+            className="shrink-0 text-cream/85 transition-all duration-200 hover:scale-110 hover:text-brick"
           >
             <DiscordIcon size={24} />
           </a>
@@ -164,13 +164,13 @@ export function Navbar() {
           {!loading && !me?.authenticated && (
             <a
               href={loginUrl}
-              className="inline-flex items-center gap-2 rounded-full border-[3px] border-ink bg-[#5865F2] px-4 py-2 text-[14px] font-semibold text-white shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-poster"
+              className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-[3px] border-ink bg-[#5865F2] px-4 py-2 text-[14px] font-semibold text-white shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-poster"
             >
               <LogIn size={16} /> Log ind
             </a>
           )}
           {!loading && me?.authenticated && me.player && (
-            <div className="relative" ref={userMenuRef}>
+            <div className="relative shrink-0" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen((v) => !v)}
                 aria-expanded={userMenuOpen}
@@ -189,7 +189,7 @@ export function Navbar() {
                     {me.player.gamertag.slice(0, 1).toUpperCase()}
                   </span>
                 )}
-                <span className="max-w-[120px] truncate text-[14px] font-semibold text-cream">
+                <span className="hidden max-w-[140px] truncate text-[14px] font-semibold text-cream 2xl:inline">
                   {me.player.gamertag}
                 </span>
               </button>
@@ -228,7 +228,7 @@ export function Navbar() {
 
         {/* Mobil hamburger */}
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-xl border-[3px] border-ink bg-coal border-cream/40 shadow-none lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-xl border-[3px] border-ink bg-coal border-cream/40 shadow-none xl:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Luk menu" : "Åbn menu"}
           aria-expanded={open}
@@ -246,7 +246,7 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobilmenu"
-            className="fixed inset-0 top-[76px] z-40 flex flex-col bg-coal lg:hidden"
+            className="fixed inset-0 top-[76px] z-40 flex flex-col bg-coal xl:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
