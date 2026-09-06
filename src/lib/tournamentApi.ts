@@ -213,14 +213,14 @@ export async function adminExportSeeding(adminKey: string, code: string) {
   }>;
 }
 
-/** Synkronisér Discord-rollerne #1–#8 med ranglisten */
+/** Synkronisér Discord-rollerne #1–#8 pr. spil med ranglisterne */
 export async function adminSyncRankRoles(adminKey: string) {
   return fetchAdmin("/admin/sync-rank-roles", adminKey, {
     method: "POST",
   }) as Promise<{
     success: boolean;
-    assigned: { rank: number; gamertag: string }[];
-    removed: { rank: number; gamertag: string }[];
+    assigned: { rank: number; gamertag: string; game: string }[];
+    removed: { rank: number; gamertag: string; game: string }[];
     skipped: string[];
   }>;
 }
