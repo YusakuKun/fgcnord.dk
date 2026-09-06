@@ -5,10 +5,11 @@ import {
   handleError,
   json,
 } from "../lib/api";
-import { computeTopRanks } from "../lib/ranks";
+import { computeAllTopRanks } from "../lib/ranks";
 
 /**
- * GET /api/ranks — offentlig top 8 på tværs af spil.
+ * GET /api/ranks — offentlig top 8 PR. SPIL.
+ * Svar: { ranks: { melee: [...], ultimate: [...], roa2: [...] } }
  * Bruges til rang-badges i lobbyen og på turneringssider.
  */
 export async function onRequestGet(
@@ -17,7 +18,7 @@ export async function onRequestGet(
   const ctx = context.data.ctx;
   const origin = getOrigin(ctx.request);
   try {
-    const ranks = await computeTopRanks(ctx.env.DB);
+    const ranks = await computeAllTopRanks(ctx.env.DB);
     return json(
       { ranks },
       {
