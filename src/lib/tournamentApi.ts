@@ -213,6 +213,34 @@ export async function adminExportSeeding(adminKey: string, code: string) {
   }>;
 }
 
+/** Tilføj en gæste-spiller til en turnering (admin — uden at skifte session) */
+export async function adminAddGuest(adminKey: string, code: string, gamertag: string) {
+  return fetchAdmin(
+    `/tournaments/${encodeURIComponent(code)}/add-guest`,
+    adminKey,
+    { method: "POST", body: JSON.stringify({ gamertag }) },
+  ) as Promise<{
+    success: boolean;
+    player: { id: string; gamertag: string };
+  }>;
+}
+
+/** Fjern en spiller fra en turnering (admin — kun før bracket-start) */
+export async function adminRemoveEntrant(
+  adminKey: string,
+  code: string,
+  playerId: string,
+) {
+  return fetchAdmin(
+    `/tournaments/${encodeURIComponent(code)}/remove-entrant`,
+    adminKey,
+    { method: "DELETE", body: JSON.stringify({ player_id: playerId }) },
+  ) as Promise<{
+    success: boolean;
+    removed: { player_id: string; gamertag: string };
+  }>;
+}
+
 /** Synkronisér Discord-rollerne #1–#8 pr. spil med ranglisterne */
 export async function adminSyncRankRoles(adminKey: string) {
   return fetchAdmin("/admin/sync-rank-roles", adminKey, {

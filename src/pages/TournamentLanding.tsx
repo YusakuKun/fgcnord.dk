@@ -6,6 +6,7 @@ import {
   Swords,
   Trophy,
   Users,
+  UserX,
 } from "lucide-react";
 import { toDataURL } from "qrcode";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -18,9 +19,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   type TournamentPublic,
+  adminAddGuest,
   adminExportSeeding,
-  joinAsGuest,
-  joinTournament,
+  adminRemoveEntrant,
   getTournament,
   getTournamentMe,
   checkin,
@@ -100,16 +101,29 @@ export function TournamentLanding() {
     void load();
   }, [load]);
 
-  const handleGuestJoin = async () => {
+  const handleAddGuest = async () => {
     if (!guestTag.trim() || !code) return;
     setBusy(true);
     try {
-      await joinAsGuest(guestTag.trim());
-      await joinTournament(code);
+      await adminAddGuest("", code, guestTag.trim());
       setGuestTag("");
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunne ikke tilmelde");
+      setError(err instanceof Error ? err.message : "Kunne ikke tilføje gæst");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRemoveEntrant = async (playerId: string, gamertag: string) => {
+    if (!code) return;
+    if (!confirm(`Fjern ${gamertag} fra turneringen?`)) return;
+    setBusy(true);
+    try {
+      await adminRemoveEntrant("", code, playerId);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunne ikke fjerne spilleren");
     } finally {
       setBusy(false);
     }
@@ -249,27 +263,35 @@ export function TournamentLanding() {
                     Scan QR → log ind med Discord → du er på bracket. Husk
                     check-in 15 min før runde 1!
                   </p>
-                  <div className="border-t-2 border-dashed border-ink/20 pt-3">
-                    <p className="text-sm text-ink/70">
-                      Har du ikke Discord? Indtast dit gamertag:
-                    </p>
-                    <div className="mt-2 flex gap-2">
-                      <input
-                        type="text"
-                        value={guestTag}
-                        onChange={(e) => setGuestTag(e.target.value)}
-                        placeholder="Dit gamertag"
-                        className="flex-1 rounded-lg border-2 border-ink bg-cream px-4 py-2 font-bold shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
-                      />
-                      <Button
-                        onClick={() => void handleGuestJoin()}
-                        disabled={busy || guestTag.trim().length < 2}
-                        className="bg-ink text-cream hover:bg-brick hover:text-ink"
-                      >
-                        Tilmeld
-                      </Button>
+                  {isAdmin ? (
+                    <div className="border-t-2 border-dashed border-ink/20 pt-3">
+                      <p className="text-sm text-ink/70">
+                        <span className="font-bold">Admin:</span> Tilføj en spiller
+                        uden Discord som gæst:
+                      </p>
+                      <div className="mt-2 flex gap-2">
+                        <input
+                          type="text"
+                          value={guestTag}
+                          onChange={(e) => setGuestTag(e.target.value)}
+                          placeholder="Gæstens gamertag"
+                          className="flex-1 rounded-lg border-2 border-ink bg-cream px-4 py-2 font-bold shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
+                        />
+                        <Button
+                          onClick={() => void handleAddGuest()}
+                          disabled={busy || guestTag.trim().length < 2}
+                          className="bg-ink text-cream hover:bg-brick hover:text-ink"
+                        >
+                          Tilføj gæst
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <p className="border-t-2 border-dashed border-ink/20 pt-3 text-center text-xs text-ink/50">
+                      Har du ikke Discord? Spørg en admin på stedet — de kan
+                      tilføje dig som gæst.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -344,6 +366,17 @@ export function TournamentLanding() {
                           <CheckCircle2 className="h-4 w-4 text-olive" />
                         ) : (
                           <span className="text-xs text-ink/40">ikke checket ind</span>
+                        )}
+                        {isAdmin && isOpen && (
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => void handleRemoveEntrant(e.id, e.gamertag)}
+                            title={`Fjern ${e.gamertag} fra turneringen`}
+                            className="rounded-md p-1 text-brick hover:bg-brick hover:text-coal disabled:opacity-40"
+                          >
+                            <UserX className="h-4 w-4" aria-hidden="true" />
+                          </button>
                         )}
                       </div>
                     </li>
