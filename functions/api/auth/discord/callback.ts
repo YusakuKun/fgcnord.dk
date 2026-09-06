@@ -161,24 +161,44 @@ export async function onRequestGet(
       .bind(user.id)
       .first<{ id: string; discord_id: string; gamertag: string; created_at: number }>();
 
+    // is_admin-kolonnen (migration 0005) kan mangle indtil den køres i D1.
+    // Alle skrivninger har en fallback uden kolonnen, så login ALDRIG fejler af den grund.
     if (!player) {
       const playerId = ulid();
-      await ctx.env.DB.prepare(
-        `INSERT INTO players (id, discord_id, gamertag, discord_username, discord_avatar, is_member, is_admin, member_since, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      )
-        .bind(
-          playerId,
-          user.id,
-          username,
-          username,
-          user.avatar ?? null,
-          isMember === true ? 1 : 0,
-          isAdmin ? 1 : 0,
-          isMember === true ? now : null,
-          now,
+      try {
+        await ctx.env.DB.prepare(
+          `INSERT INTO players (id, discord_id, gamertag, discord_username, discord_avatar, is_member, is_admin, member_since, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
-        .run();
+          .bind(
+            playerId,
+            user.id,
+            username,
+            username,
+            user.avatar ?? null,
+            isMember === true ? 1 : 0,
+            isAdmin ? 1 : 0,
+            isMember === true ? now : null,
+            now,
+          )
+          .run();
+      } catch {
+        await ctx.env.DB.prepare(
+          `INSERT INTO players (id, discord_id, gamertag, discord_username, discord_avatar, is_member, member_since, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+          .bind(
+            playerId,
+            user.id,
+            username,
+            username,
+            user.avatar ?? null,
+            isMember === true ? 1 : 0,
+            isMember === true ? now : null,
+            now,
+          )
+          .run();
+      }
       player = { id: playerId, discord_id: user.id, gamertag: username, created_at: now };
     } else {
       // Opdatér profilfelter + admin-rolle — og medlemsstatus, hvis vi kunne tjekke den
@@ -190,17 +210,33 @@ export async function onRequestGet(
           .bind(username, user.avatar ?? null, player.id)
           .run();
       } else if (isMember) {
-        await ctx.env.DB.prepare(
-          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 1, is_admin = ?, member_since = COALESCE(member_since, ?) WHERE id = ?",
-        )
-          .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, now, player.id)
-          .run();
+        try {
+          await ctx.env.DB.prepare(
+            "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 1, is_admin = ?, member_since = COALESCE(member_since, ?) WHERE id = ?",
+          )
+            .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, now, player.id)
+            .run();
+        } catch {
+          await ctx.env.DB.prepare(
+            "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 1, member_since = COALESCE(member_since, ?) WHERE id = ?",
+          )
+            .bind(username, user.avatar ?? null, now, player.id)
+            .run();
+        }
       } else {
-        await ctx.env.DB.prepare(
-          "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 0, is_admin = ?, member_since = NULL WHERE id = ?",
-        )
-          .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, player.id)
-          .run();
+        try {
+          await ctx.env.DB.prepare(
+            "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 0, is_admin = ?, member_since = NULL WHERE id = ?",
+          )
+            .bind(username, user.avatar ?? null, isAdmin ? 1 : 0, player.id)
+            .run();
+        } catch {
+          await ctx.env.DB.prepare(
+            "UPDATE players SET discord_username = ?, discord_avatar = ?, is_member = 0, member_since = NULL WHERE id = ?",
+          )
+            .bind(username, user.avatar ?? null, player.id)
+            .run();
+        }
       }
     }
 
