@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { Layout } from "@/components/Layout";
+import { AuthProvider } from "@/lib/auth";
 import { Admin } from "@/pages/Admin";
 import { BlivMedlem } from "@/pages/BlivMedlem";
 import Galleri from "@/pages/Galleri";
@@ -19,6 +20,7 @@ import "./App.css";
 
 function App() {
   return (
+    <AuthProvider>
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -36,6 +38,7 @@ function App() {
         <Route path="*" element={<Placeholder />} />
       </Route>
     </Routes>
+    </AuthProvider>
   );
 }
 
