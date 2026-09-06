@@ -3,6 +3,7 @@ import {
   Calendar,
   CheckCircle2,
   Copy,
+  Crown,
   Download,
   Gamepad2,
   KeyRound,
@@ -34,6 +35,8 @@ import {
   adminDeleteTournament,
   adminImportStartggResults,
   adminAnnounceEvent,
+  adminSyncRankRoles,
+  adminExportSeeding,
   type AdminTournament,
   type ImportResultsSummary,
 } from "@/lib/tournamentApi";
@@ -248,6 +251,24 @@ export function Admin() {
     }
   };
 
+  const handleExportSeeding = async (t: AdminTournament) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await adminExportSeeding(key, t.join_code);
+      setNotice(
+        `Seeding sendt til "${res.event}" (${res.phase}): ${res.seeded} spillere seedet efter rating.` +
+          (res.unmatchedSite.length > 0
+            ? ` Ikke fundet på start.gg: ${res.unmatchedSite.join(", ")}.`
+            : ""),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunne ikke sende seeding til start.gg");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleOpenLobby = async () => {
     if (lobbyTitle.trim().length < 2) {
       setError("Giv lobbyen en titel.");
@@ -302,6 +323,28 @@ export function Admin() {
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunne ikke fjerne spilleren");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSyncRanks = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await adminSyncRankRoles(key);
+      const parts = [
+        res.assigned.length > 0
+          ? `Tildelt: ${res.assigned.map((a) => `#${a.rank} ${a.gamertag}`).join(", ")}.`
+          : "Ingen nye roller tildelt.",
+        res.removed.length > 0
+          ? `Fjernet: ${res.removed.map((r) => `#${r.rank} ${r.gamertag}`).join(", ")}.`
+          : "",
+      ];
+      if (res.skipped.length > 0) parts.push(`Sprunget over: ${res.skipped.join(" · ")}`);
+      setNotice(`Rang-roller synkroniseret. ${parts.filter(Boolean).join(" ")}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunne ikke synkronisere rang-roller");
     } finally {
       setBusy(false);
     }
@@ -726,6 +769,18 @@ export function Admin() {
                             <Download className="mr-1 h-4 w-4" aria-hidden="true" /> Hent tilmeldte
                           </Button>
                         )}
+                        {t.startgg_slug && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => void handleExportSeeding(t)}
+                            disabled={busy}
+                            className="border-2 border-ink"
+                            title={`Send seeding efter rating til ${t.startgg_slug}`}
+                          >
+                            <Crown className="mr-1 h-4 w-4" aria-hidden="true" /> Send seeding
+                          </Button>
+                        )}
                         {(t.status === "signup" || t.status === "checkin") && (
                           <Button
                             size="sm"
@@ -799,6 +854,24 @@ export function Admin() {
                 >
                   <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                   Importér resultater
+                </Button>
+              </div>
+
+              {/* Rang-roller */}
+              <div className="rounded-xl border-2 border-ink bg-cream p-5 shadow-poster-sm">
+                <h3 className="font-heading font-bold">Rang-roller på Discord (top 8)</h3>
+                <p className="mt-1 text-sm text-ink/60">
+                  Giver rollerne #1–#8 til ranglistens top 8 og fjerner dem igen
+                  fra dem der ryger ud. Kører automatisk hvert kvartal — brug
+                  knappen her til at gen-synke med det samme.
+                </p>
+                <Button
+                  onClick={() => void handleSyncRanks()}
+                  disabled={busy}
+                  className="mt-4 w-full bg-ink text-cream hover:bg-brick hover:text-coal"
+                >
+                  <Crown className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Gen-sync rang-roller nu
                 </Button>
               </div>
 
