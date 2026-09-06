@@ -117,7 +117,8 @@ async function fetchAdmin(
     ...init,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${adminKey}`,
+      // Tom nøgle = brug Discord-sessionen (@Admin-rolle) i stedet
+      ...(adminKey ? { Authorization: `Bearer ${adminKey}` } : {}),
       ...init?.headers,
     },
   });

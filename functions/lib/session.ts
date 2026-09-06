@@ -78,6 +78,7 @@ export interface PlayerRow {
   discord_id: string | null;
   gamertag: string;
   created_at: number;
+  is_admin: number;
 }
 
 export async function createSession(
@@ -127,7 +128,7 @@ export async function readSession(
   const row = await db
     .prepare(
       `SELECT s.token, s.player_id, s.tournament_id, s.expires_at,
-              p.id as p_id, p.discord_id, p.gamertag, p.created_at
+              p.id as p_id, p.discord_id, p.gamertag, p.created_at, p.is_admin
        FROM sessions s
        JOIN players p ON p.id = s.player_id
        WHERE s.token = ?`,
@@ -139,6 +140,7 @@ export async function readSession(
         discord_id: string | null;
         gamertag: string;
         created_at: number;
+        is_admin: number;
       }
     >();
 
@@ -157,6 +159,7 @@ export async function readSession(
     discord_id: row.discord_id,
     gamertag: row.gamertag,
     created_at: row.created_at,
+    is_admin: row.is_admin ?? 0,
   };
   return { session, player };
 }
