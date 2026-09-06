@@ -20,7 +20,7 @@ export async function onRequestPost(
   const origin = getOrigin(ctx.request);
   try {
     const session = await requireSession(ctx);
-    const lobby = await getLobby(ctx.env.DB, ctx.params.id);
+    const lobby = await getLobby(ctx.env.DB, (context.params.id as string));
     if (!lobby) {
       return error("Lobbyen findes ikke.", 404, corsHeaders(origin));
     }

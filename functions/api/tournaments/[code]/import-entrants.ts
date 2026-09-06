@@ -61,7 +61,7 @@ export async function onRequestPost(
   const origin = getOrigin(ctx.request);
   try {
     requireAdmin(ctx);
-    const code = ctx.params.code;
+    const code = (context.params.code as string);
 
     const tournament = await ctx.env.DB.prepare(
       "SELECT id, name, game, status, startgg_slug FROM tournaments WHERE join_code = ?",

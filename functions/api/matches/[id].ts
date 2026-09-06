@@ -82,7 +82,7 @@ export async function onRequestGet(
   const ctx = context.data.ctx;
   const origin = getOrigin(ctx.request);
   try {
-    const match = await loadMatch(ctx.env.DB, ctx.params.id);
+    const match = await loadMatch(ctx.env.DB, (context.params.id as string));
     if (!match) {
       return error("Kampen findes ikke.", 404, corsHeaders(origin));
     }
@@ -100,7 +100,7 @@ export async function onRequestPost(
   const origin = getOrigin(ctx.request);
   try {
     const session = await requireSession(ctx);
-    const matchId = ctx.params.id;
+    const matchId = (context.params.id as string);
 
     const body = (await ctx.request.json()) as {
       score1?: number;
@@ -209,7 +209,7 @@ export async function onRequestPut(
   const origin = getOrigin(ctx.request);
   try {
     const session = await requireSession(ctx);
-    const matchId = ctx.params.id;
+    const matchId = (context.params.id as string);
 
     const match = await loadMatch(ctx.env.DB, matchId);
     if (!match) {
@@ -271,7 +271,7 @@ export async function onRequestDelete(
   const origin = getOrigin(ctx.request);
   try {
     const session = await requireSession(ctx);
-    const matchId = ctx.params.id;
+    const matchId = (context.params.id as string);
 
     const match = await loadMatch(ctx.env.DB, matchId);
     if (!match) {

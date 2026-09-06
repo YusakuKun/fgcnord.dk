@@ -14,7 +14,7 @@ export async function onRequestGet(
   const ctx = context.data.ctx;
   const origin = getOrigin(ctx.request);
   try {
-    const code = ctx.params.code;
+    const code = (context.params.code as string);
     const tournament = await ctx.env.DB.prepare(
       "SELECT id, name, status FROM tournaments WHERE join_code = ?",
     )

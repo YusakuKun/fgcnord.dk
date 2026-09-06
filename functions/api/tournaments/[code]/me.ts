@@ -16,7 +16,7 @@ export async function onRequestGet(
   const origin = getOrigin(ctx.request);
   try {
     const session = await requireSession(ctx);
-    const code = ctx.params.code;
+    const code = (context.params.code as string);
 
     const tournament = await ctx.env.DB.prepare(
       "SELECT id, status FROM tournaments WHERE join_code = ?",
