@@ -20,7 +20,18 @@ export async function onRequestGet(
     const clientId = ctx.env.DISCORD_CLIENT_ID;
     const clientSecret = ctx.env.DISCORD_CLIENT_SECRET;
     if (!clientId || !clientSecret) {
-      return error("Discord-login er ikke konfigureret.", 503, corsHeaders(origin));
+      // Midlertidig diagnose: sig hvilken variabel der mangler i production.
+      const missing = [
+        !clientId ? "DISCORD_CLIENT_ID" : null,
+        !clientSecret ? "DISCORD_CLIENT_SECRET" : null,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      return error(
+        `Discord-login er ikke konfigureret. Mangler: ${missing}`,
+        503,
+        corsHeaders(origin),
+      );
     }
 
     const reqUrl = new URL(ctx.request.url);
