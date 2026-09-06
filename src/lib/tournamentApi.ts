@@ -197,6 +197,18 @@ export async function adminImportEntrants(adminKey: string, code: string) {
   }>;
 }
 
+/** Slet en turnering og alt tilknyttet data (tilmeldinger, kampe, lobby) */
+export async function adminDeleteTournament(adminKey: string, code: string) {
+  return fetchAdmin(
+    `/admin/tournaments/${encodeURIComponent(code)}`,
+    adminKey,
+    { method: "DELETE" },
+  ) as Promise<{
+    ok: boolean;
+    deleted: { id: string; name: string; join_code: string };
+  }>;
+}
+
 /* ---------- Admin: lobby ---------- */
 
 export async function adminOpenLobby(

@@ -30,6 +30,7 @@ import {
   adminOpenLobby,
   adminCloseLobby,
   adminStartTournament,
+  adminDeleteTournament,
   adminImportStartggResults,
   adminAnnounceEvent,
   type AdminTournament,
@@ -181,6 +182,30 @@ export function Admin() {
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunne ikke starte bracket");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDelete = async (t: AdminTournament) => {
+    if (
+      !confirm(
+        `Slet "${t.name}" (${t.join_code})?\n\nDette fjerner turneringen, alle tilmeldinger og alle kampe permanent. Kan ikke fortrydes.`,
+      )
+    ) {
+      return;
+    }
+    if (!confirm(`Er du HELT sikker? "${t.name}" slettes for altid.`)) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await adminDeleteTournament(key, t.join_code);
+      setNotice(`Turneringen "${t.name}" er slettet.`);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunne ikke slette turneringen");
     } finally {
       setBusy(false);
     }
@@ -639,6 +664,16 @@ export function Admin() {
                             <Play className="mr-1 h-4 w-4" aria-hidden="true" /> Start bracket
                           </Button>
                         )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => void handleDelete(t)}
+                          disabled={busy}
+                          className="border-2 border-brick text-brick hover:bg-brick hover:text-coal"
+                          title="Slet turneringen permanent"
+                        >
+                          <Trash2 className="mr-1 h-4 w-4" aria-hidden="true" /> Slet
+                        </Button>
                       </div>
                     </li>
                   ))}
