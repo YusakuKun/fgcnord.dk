@@ -1,6 +1,6 @@
 /**
  * DELETE /api/admin/tournaments/:code — slet en turnering og alt tilknyttet
- * data (tilmeldinger, kampe, lobby-relationer).
+ * data (tilmeldinger, kampe, session-koblinger).
  *
  * Kræver ADMIN_API_KEY (Bearer). Sletningen er permanent.
  * Børns rækker slettes eksplicit først, så det virker uanset om D1
@@ -44,21 +44,13 @@ export async function onRequestDelete(
     const id = tournament.id;
 
     // Slet børn først (eksplicit — ikke afhængig af FK-håndhævelse).
+    // Bemærk: lobby_sessions er ikke koblet på turneringer, så de røres ikke.
     await ctx.env.DB.batch([
       ctx.env.DB.prepare(
         "DELETE FROM matches WHERE tournament_id = ?",
       ).bind(id),
       ctx.env.DB.prepare(
         "DELETE FROM entries WHERE tournament_id = ?",
-      ).bind(id),
-      ctx.env.DB.prepare(
-        "DELETE FROM lobby_matches WHERE lobby_id IN (SELECT id FROM lobby_sessions WHERE tournament_id = ?)",
-      ).bind(id),
-      ctx.env.DB.prepare(
-        "DELETE FROM lobby_attendees WHERE lobby_id IN (SELECT id FROM lobby_sessions WHERE tournament_id = ?)",
-      ).bind(id),
-      ctx.env.DB.prepare(
-        "DELETE FROM lobby_sessions WHERE tournament_id = ?",
       ).bind(id),
       ctx.env.DB.prepare(
         "UPDATE sessions SET tournament_id = NULL WHERE tournament_id = ?",
