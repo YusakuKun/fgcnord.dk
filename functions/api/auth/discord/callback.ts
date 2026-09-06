@@ -132,7 +132,16 @@ export async function onRequestGet(
       }),
     });
     if (!tokenRes.ok) {
-      return redirect(withErrorParam(r, "discord"), [CLEAR_STATE_COOKIE]);
+      // Midlertidig diagnose: medtag Discords egen fejlkode i redirecten
+      // (fx invalid_client = forkert secret, invalid_grant = redirect_uri-mismatch)
+      let diag = `discord-${tokenRes.status}`;
+      try {
+        const body = (await tokenRes.json()) as { error?: string };
+        if (body.error) diag = `discord-${tokenRes.status}-${body.error}`;
+      } catch {
+        // behold status-baseret diagnose
+      }
+      return redirect(withErrorParam(r, diag), [CLEAR_STATE_COOKIE]);
     }
     const tokenData = (await tokenRes.json()) as DiscordTokenResponse;
 
