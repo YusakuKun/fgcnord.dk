@@ -125,24 +125,39 @@ export async function readSession(
   const valid = await unsign(token, signature, secret);
   if (!valid) return { session: null, player: null };
 
-  const row = await db
-    .prepare(
-      `SELECT s.token, s.player_id, s.tournament_id, s.expires_at,
-              p.id as p_id, p.discord_id, p.gamertag, p.created_at, p.is_admin
-       FROM sessions s
-       JOIN players p ON p.id = s.player_id
-       WHERE s.token = ?`,
-    )
-    .bind(token)
-    .first<
-      SessionRow & {
-        p_id: string;
-        discord_id: string | null;
-        gamertag: string;
-        created_at: number;
-        is_admin: number;
-      }
-    >();
+  // is_admin-kolonnen (migration 0005) kan mangle indtil den køres i D1 —
+  // så falder vi tilbage til et SELECT uden den, og login virker stadig.
+  type JoinedRow = SessionRow & {
+    p_id: string;
+    discord_id: string | null;
+    gamertag: string;
+    created_at: number;
+    is_admin?: number;
+  };
+  let row: JoinedRow | null;
+  try {
+    row = await db
+      .prepare(
+        `SELECT s.token, s.player_id, s.tournament_id, s.expires_at,
+                p.id as p_id, p.discord_id, p.gamertag, p.created_at, p.is_admin
+         FROM sessions s
+         JOIN players p ON p.id = s.player_id
+         WHERE s.token = ?`,
+      )
+      .bind(token)
+      .first<JoinedRow>();
+  } catch {
+    row = await db
+      .prepare(
+        `SELECT s.token, s.player_id, s.tournament_id, s.expires_at,
+                p.id as p_id, p.discord_id, p.gamertag, p.created_at
+         FROM sessions s
+         JOIN players p ON p.id = s.player_id
+         WHERE s.token = ?`,
+      )
+      .bind(token)
+      .first<JoinedRow>();
+  }
 
   if (!row || row.expires_at < Date.now()) {
     return { session: null, player: null };

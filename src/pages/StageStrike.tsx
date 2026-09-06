@@ -100,14 +100,14 @@ const GAME_CONFIG: Record<
     label: "Ultimate",
     bans: 3,
     stages: ULTIMATE_STAGES,
-    banner: "/stage-strike-banner-ultimate.jpg?v=3",
+    banner: "/stage-thumbs/battlefield.png",
     bannerAlt: "Battlefield-staget fra Ultimate i dagslys",
   },
   melee: {
     label: "Melee",
     bans: 1,
     stages: MELEE_STAGES,
-    banner: "/stage-strike-banner.jpg?v=3",
+    banner: "/melee-thumbs/battlefield.png",
     bannerAlt: "Battlefield-staget fra Melee med den ringede planet på nattehimlen",
   },
   mkwii: {
@@ -502,23 +502,29 @@ export function StageStrike() {
       {/* Banner — samme stage, forskellig tid på døgnet pr. spil */}
       <div className="relative h-[260px] w-full overflow-hidden bg-ink sm:h-[340px] md:h-[420px]">
         <AnimatePresence mode="sync">
-          <motion.img
+          {/* Det rigtige Battlefield-stage: skarp i midten (object-contain),
+              samme billede blurret som udfyldning bagved — så liner Ultimate
+              og Melee altid perfekt op, fordi begge thumbs er 800×500. */}
+          <motion.div
             key={game}
-            src={config.banner}
-            alt={config.bannerAlt}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
-            onError={(e) => {
-              // Fallback til standard-banneret hvis et spil-banner mangler i public/
-              const img = e.currentTarget;
-              if (!img.src.includes("/stage-strike-banner.jpg")) {
-                img.src = "/stage-strike-banner.jpg?v=3";
-              }
-            }}
-          />
+            className="absolute inset-0"
+          >
+            <img
+              src={config.banner}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 object-cover blur-xl"
+            />
+            <img
+              src={config.banner}
+              alt={config.bannerAlt}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+          </motion.div>
         </AnimatePresence>
         <div
           aria-hidden="true"

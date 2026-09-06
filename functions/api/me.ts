@@ -7,7 +7,7 @@ interface MemberPlayerRow {
   discord_username: string | null;
   discord_avatar: string | null;
   is_member: number;
-  is_admin: number;
+  is_admin?: number;
   member_since: number | null;
 }
 
@@ -76,11 +76,22 @@ export async function onRequestGet(
       );
     }
 
-    const row = await context.env.DB.prepare(
-      "SELECT id, gamertag, discord_username, discord_avatar, is_member, is_admin, member_since FROM players WHERE id = ?",
-    )
-      .bind(player.id)
-      .first<MemberPlayerRow>();
+    // is_admin-kolonnen (migration 0005) kan mangle indtil den køres i D1 —
+    // så falder vi tilbage til et SELECT uden den.
+    let row: MemberPlayerRow | null;
+    try {
+      row = await context.env.DB.prepare(
+        "SELECT id, gamertag, discord_username, discord_avatar, is_member, is_admin, member_since FROM players WHERE id = ?",
+      )
+        .bind(player.id)
+        .first<MemberPlayerRow>();
+    } catch {
+      row = await context.env.DB.prepare(
+        "SELECT id, gamertag, discord_username, discord_avatar, is_member, member_since FROM players WHERE id = ?",
+      )
+        .bind(player.id)
+        .first<MemberPlayerRow>();
+    }
 
     let isMember = row?.is_member === 1;
     let isAdmin = row?.is_admin === 1;
@@ -93,11 +104,20 @@ export async function onRequestGet(
         isMember = live.isMember;
         isAdmin = live.isAdmin;
         memberSince = live.isMember ? (memberSince ?? Date.now()) : null;
-        await context.env.DB.prepare(
-          "UPDATE players SET is_member = ?, is_admin = ?, member_since = ? WHERE id = ?",
-        )
-          .bind(live.isMember ? 1 : 0, live.isAdmin ? 1 : 0, memberSince, player.id)
-          .run();
+        try {
+          await context.env.DB.prepare(
+            "UPDATE players SET is_member = ?, is_admin = ?, member_since = ? WHERE id = ?",
+          )
+            .bind(live.isMember ? 1 : 0, live.isAdmin ? 1 : 0, memberSince, player.id)
+            .run();
+        } catch {
+          // is_admin-kolonnen mangler endnu — opdatér kun medlemsstatus
+          await context.env.DB.prepare(
+            "UPDATE players SET is_member = ?, member_since = ? WHERE id = ?",
+          )
+            .bind(live.isMember ? 1 : 0, memberSince, player.id)
+            .run();
+        }
       }
     }
 
