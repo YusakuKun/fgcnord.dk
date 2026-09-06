@@ -24,4 +24,13 @@ interface Env {
   DISCORD_PING_ROLE_ID?: string;
   /** start.gg API-token (Developer Settings på start.gg) — bruges til events + tilmeldte */
   STARTGG_API_TOKEN?: string;
+  /** Discord-rolle-IDs for rangliste top 8 (valgfri) */
+  DISCORD_RANK_ROLE_1?: string;
+  DISCORD_RANK_ROLE_2?: string;
+  DISCORD_RANK_ROLE_3?: string;
+  DISCORD_RANK_ROLE_4?: string;
+  DISCORD_RANK_ROLE_5?: string;
+  DISCORD_RANK_ROLE_6?: string;
+  DISCORD_RANK_ROLE_7?: string;
+  DISCORD_RANK_ROLE_8?: string;
 }

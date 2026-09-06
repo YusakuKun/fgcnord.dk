@@ -13,16 +13,20 @@ import { useParams } from "react-router-dom";
 
 import { DiscordIcon } from "@/components/Navbar";
 import { PageHeader } from "@/components/PageHeader";
+import { RankBadge } from "@/components/RankBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   type TournamentPublic,
+  adminExportSeeding,
   joinAsGuest,
   joinTournament,
   getTournament,
   getTournamentMe,
   checkin,
 } from "@/lib/tournamentApi";
+import { getMe } from "@/lib/lobbyApi";
+import { getRankMap } from "@/lib/ranksApi";
 import { cn } from "@/lib/utils";
 
 const gameLabels: Record<string, string> = {
@@ -48,6 +52,9 @@ export function TournamentLanding() {
   const [guestTag, setGuestTag] = useState("");
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [ranks, setRanks] = useState<Record<string, number>>({});
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [seedResult, setSeedResult] = useState<string | null>(null);
 
   // Tick hvert 30. sekund, så check-in vinduet/countdown opdaterer sig selv
   useEffect(() => {
@@ -78,6 +85,10 @@ export function TournamentLanding() {
       ]);
       setTournament(t);
       setMe(m);
+      getRankMap().then(setRanks);
+      getMe()
+        .then((r) => setIsAdmin(r.isAdmin === true))
+        .catch(() => setIsAdmin(false));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Fejl ved indlæsning");
     } finally {
@@ -112,6 +123,25 @@ export function TournamentLanding() {
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Check-in fejlede");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleExportSeeding = async () => {
+    if (!code) return;
+    setBusy(true);
+    setSeedResult(null);
+    try {
+      const res = await adminExportSeeding("", code);
+      setSeedResult(
+        `Seeding sendt til ${res.event} (${res.phase}): ${res.seeded} spillere seedet efter rating.` +
+          (res.unmatchedSite.length > 0
+            ? ` Ikke fundet på start.gg: ${res.unmatchedSite.join(", ")}.`
+            : ""),
+      );
+    } catch (err) {
+      setSeedResult(err instanceof Error ? err.message : "Seeding fejlede");
     } finally {
       setBusy(false);
     }
@@ -302,7 +332,10 @@ export function TournamentLanding() {
                         e.checked_in ? "bg-cream-dim" : "bg-cream",
                       )}
                     >
-                      <span className="font-bold">{e.gamertag}</span>
+                      <span className="flex items-center gap-2 font-bold">
+                        <RankBadge rank={ranks[e.id]} />
+                        {e.gamertag}
+                      </span>
                       <div className="flex items-center gap-2">
                         {e.seed !== null && (
                           <span className="text-xs font-bold text-ink/50">Seed {e.seed}</span>
@@ -316,6 +349,26 @@ export function TournamentLanding() {
                     </li>
                   ))}
                 </ul>
+              )}
+
+              {isAdmin && tournament.startgg_slug && (
+                <div className="mt-6 rounded-xl border-2 border-dashed border-ink/30 p-4">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink/50">
+                    Admin · start.gg
+                  </p>
+                  <Button
+                    onClick={() => void handleExportSeeding()}
+                    disabled={busy || tournament.entrants.length === 0}
+                    variant="outline"
+                    className="border-2 border-ink"
+                  >
+                    <Trophy className="mr-2 h-4 w-4" />
+                    Send seeding til start.gg (efter rating)
+                  </Button>
+                  {seedResult && (
+                    <p className="mt-2 text-sm text-ink/70">{seedResult}</p>
+                  )}
+                </div>
               )}
             </motion.div>
           </div>

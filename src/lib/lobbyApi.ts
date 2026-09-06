@@ -148,6 +148,7 @@ export async function getMe() {
   return fetchJson("/me") as Promise<{
     authenticated: boolean;
     isMember: boolean;
+    isAdmin: boolean;
     player?: { id: string; gamertag: string; username: string | null; avatarUrl: string | null };
   }>;
 }

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { DiscordIcon, DISCORD_URL } from "@/components/Navbar";
 import { PageHeader } from "@/components/PageHeader";
+import { RankBadge } from "@/components/RankBadge";
 import { Button } from "@/components/ui/button";
 import {
   cancelLobbyMatch,
@@ -18,6 +19,7 @@ import {
   type LobbyMatch,
   type LobbyState,
 } from "@/lib/lobbyApi";
+import { getRankMap } from "@/lib/ranksApi";
 
 const gameLabels: Record<string, string> = {
   melee: "Melee",
@@ -37,6 +39,7 @@ export function Lobby() {
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [scores, setScores] = useState<Record<string, { s1: string; s2: string }>>({});
+  const [ranks, setRanks] = useState<Record<string, number>>({});
 
   const load = useCallback(async () => {
     try {
@@ -44,6 +47,7 @@ export function Lobby() {
       setLobby(lobbyRes.lobby);
       setMe(meRes as Me);
       setError(null);
+      getRankMap().then(setRanks);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunne ikke hente lobbyen");
     }
@@ -322,9 +326,10 @@ export function Lobby() {
                       className="flex items-center justify-between gap-2 rounded-xl border-2 border-ink bg-cream px-4 py-3 shadow-poster-sm"
                     >
                       <div>
-                        <p className="font-bold">
+                        <p className="flex items-center gap-2 font-bold">
+                          <RankBadge rank={ranks[a.id]} />
                           {a.gamertag}
-                          {a.id === myId && <span className="ml-1 text-ink/50">(dig)</span>}
+                          {a.id === myId && <span className="text-ink/50">(dig)</span>}
                         </p>
                         {a.rating !== null && (
                           <p className="text-xs font-bold text-ink/60">
