@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { LogIn, LogOut, Menu, Shield, X } from "lucide-react";
 import { Sparkle } from "./Sparkle";
+import { useAuth } from "@/lib/auth";
 
 const LINKS = [
   { to: "/", label: "Forside" },
@@ -27,9 +28,41 @@ export function DiscordIcon({ size = 20 }: { size?: number }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { pathname } = useLocation();
+  const { me, loading, logout } = useAuth();
   const overlayRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const loginUrl = `/api/auth/discord?returnTo=${encodeURIComponent(pathname)}`;
+
+  // Luk bruger-menuen ved klik udenfor
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!userMenuRef.current?.contains(e.target as Node)) setUserMenuOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setUserMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [userMenuOpen]);
+
+  useEffect(() => {
+    setUserMenuOpen(false);
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    setUserMenuOpen(false);
+    setOpen(false);
+    await logout();
+  };
 
   // Luk overlay ved route-skift
   useEffect(() => {
@@ -126,6 +159,71 @@ export function Navbar() {
           >
             <DiscordIcon size={24} />
           </a>
+
+          {/* Login / bruger-menu */}
+          {!loading && !me?.authenticated && (
+            <a
+              href={loginUrl}
+              className="inline-flex items-center gap-2 rounded-full border-[3px] border-ink bg-[#5865F2] px-4 py-2 text-[14px] font-semibold text-white shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-poster"
+            >
+              <LogIn size={16} /> Log ind
+            </a>
+          )}
+          {!loading && me?.authenticated && me.player && (
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                aria-expanded={userMenuOpen}
+                aria-haspopup="menu"
+                aria-label={`Brugermenu for ${me.player.gamertag}`}
+                className="flex items-center gap-2 rounded-full border-[3px] border-ink bg-ink/40 py-1 pl-1 pr-3 shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-poster"
+              >
+                {me.player.avatarUrl ? (
+                  <img
+                    src={me.player.avatarUrl}
+                    alt=""
+                    className="h-8 w-8 rounded-full border-2 border-ink object-cover"
+                  />
+                ) : (
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-brick font-display text-sm text-ink">
+                    {me.player.gamertag.slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+                <span className="max-w-[120px] truncate text-[14px] font-semibold text-cream">
+                  {me.player.gamertag}
+                </span>
+              </button>
+              {userMenuOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-[calc(100%+10px)] w-52 overflow-hidden rounded-2xl border-[3px] border-ink bg-coal shadow-poster"
+                >
+                  <div className="border-b border-cream/10 px-4 py-3">
+                    <p className="truncate text-sm font-semibold text-cream">{me.player.gamertag}</p>
+                    {me.player.username && (
+                      <p className="truncate text-xs text-cream/60">@{me.player.username}</p>
+                    )}
+                  </div>
+                  {me.isAdmin && (
+                    <Link
+                      to="/admin"
+                      role="menuitem"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-cream/85 transition-colors hover:bg-ink/40 hover:text-brick"
+                    >
+                      <Shield size={15} /> Admin
+                    </Link>
+                  )}
+                  <button
+                    role="menuitem"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-cream/85 transition-colors hover:bg-ink/40 hover:text-brick"
+                  >
+                    <LogOut size={15} /> Log ud
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Mobil hamburger */}
@@ -190,6 +288,59 @@ export function Navbar() {
               >
                 <DiscordIcon size={22} /> Join os på Discord
               </motion.a>
+
+              {/* Login / log ud (mobil) */}
+              {!loading && !me?.authenticated && (
+                <motion.a
+                  href={loginUrl}
+                  initial={{ x: 60, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 60, opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 6 * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-4 inline-flex items-center gap-3 font-semibold text-cream"
+                >
+                  <LogIn size={20} /> Log ind med Discord
+                </motion.a>
+              )}
+              {!loading && me?.authenticated && me.player && (
+                <motion.div
+                  initial={{ x: 60, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 60, opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 6 * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-4 flex flex-col gap-3"
+                >
+                  <div className="flex items-center gap-3 text-cream">
+                    {me.player.avatarUrl ? (
+                      <img
+                        src={me.player.avatarUrl}
+                        alt=""
+                        className="h-9 w-9 rounded-full border-2 border-ink object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-brick font-display text-sm text-ink">
+                        {me.player.gamertag.slice(0, 1).toUpperCase()}
+                      </span>
+                    )}
+                    <span className="font-semibold">{me.player.gamertag}</span>
+                  </div>
+                  {me.isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setOpen(false)}
+                      className="inline-flex items-center gap-3 text-cream/80"
+                    >
+                      <Shield size={20} /> Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-3 text-left text-cream/80"
+                  >
+                    <LogOut size={20} /> Log ud
+                  </button>
+                </motion.div>
+              )}
             </nav>
           </motion.div>
         )}
