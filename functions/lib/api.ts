@@ -11,6 +11,8 @@ export interface Env {
   DISCORD_BOT_TOKEN?: string;
   DISCORD_GUILD_ID?: string;
   DISCORD_MEMBER_ROLE_ID?: string;
+  /** Discord-rolle der giver admin-adgang til kontrolpanelet */
+  DISCORD_ADMIN_ROLE_ID?: string;
   /** Rolle der pinges ved nye turneringer/bracket-start (falder tilbage på medlemsrollen) */
   DISCORD_PING_ROLE_ID?: string;
   /** start.gg API-token (Developer Settings på start.gg) */
@@ -73,9 +75,14 @@ export async function requireSession(
 export function requireAdmin(ctx: ApiContext): void {
   const auth = ctx.request.headers.get("Authorization");
   const expected = ctx.env.ADMIN_API_KEY;
-  if (!expected || auth !== `Bearer ${expected}`) {
-    throw new ResponseError("Ugyldig admin-nøgle.", 403);
+  if (expected && auth === `Bearer ${expected}`) {
+    return;
   }
+  // Alternativ: logget ind med Discord og har @Admin-rollen på serveren
+  if (ctx.data.player?.is_admin === 1) {
+    return;
+  }
+  throw new ResponseError("Ugyldig admin-nøgle.", 403);
 }
 
 export function getOrigin(request: Request): string {
