@@ -198,6 +198,33 @@ export async function adminImportEntrants(adminKey: string, code: string) {
   }>;
 }
 
+/** Send seeding (baseret på rangliste-rating) til start.gg-eventet */
+export async function adminExportSeeding(adminKey: string, code: string) {
+  return fetchAdmin(
+    `/tournaments/${encodeURIComponent(code)}/export-seeding`,
+    adminKey,
+    { method: "POST" },
+  ) as Promise<{
+    success: boolean;
+    event: string;
+    phase: string;
+    seeded: number;
+    unmatchedSite: string[];
+  }>;
+}
+
+/** Synkronisér Discord-rollerne #1–#8 med ranglisten */
+export async function adminSyncRankRoles(adminKey: string) {
+  return fetchAdmin("/admin/sync-rank-roles", adminKey, {
+    method: "POST",
+  }) as Promise<{
+    success: boolean;
+    assigned: { rank: number; gamertag: string }[];
+    removed: { rank: number; gamertag: string }[];
+    skipped: string[];
+  }>;
+}
+
 /** Slet en turnering og alt tilknyttet data (tilmeldinger, kampe, lobby) */
 export async function adminDeleteTournament(adminKey: string, code: string) {
   return fetchAdmin(
