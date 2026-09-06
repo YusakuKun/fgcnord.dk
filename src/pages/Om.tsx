@@ -68,13 +68,15 @@ const values = [
   },
 ];
 
-const board = [
+const board: { role: string; name?: string; avatar: string }[] = [
   {
     role: "Primus motor",
+    name: "Emil Yusaku Tauchi",
     avatar: "/board-avatars/avatar-1.png",
   },
   {
     role: "Eventansvarlig",
+    name: "Aksel Bang Knudsen",
     avatar: "/board-avatars/avatar-2.png",
   },
   {
@@ -257,16 +259,18 @@ export function Om() {
               >
                 <SafeImage
                   src={member.avatar}
-                  alt={`Ledig plads som ${member.role}`}
+                  alt={member.name ?? `Ledig plads som ${member.role}`}
                   className="mx-auto h-28 w-28 rounded-full border-4 border-cream/20 object-cover"
                 />
                 <h3 className="mt-4 font-heading text-lg font-bold">
-                  Ledig plads
+                  {member.name ?? "Dig?"}
                 </h3>
                 <p className="text-brick-soft">{member.role}</p>
-                <p className="mt-1 text-sm text-cream/60">
-                  Frivillig crew-rolle — åben for alle
-                </p>
+                {!member.name && (
+                  <p className="mt-1 text-sm text-cream/60">
+                    Frivillig crew-rolle — åben for alle
+                  </p>
+                )}
               </motion.div>
             ))}
 
