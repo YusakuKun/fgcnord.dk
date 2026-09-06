@@ -61,7 +61,11 @@ export async function onRequestGet(
 
     return json(tournament, { headers: corsHeaders(origin) });
   } catch (err) {
-    return handleError(err, origin);
+    // MIDLERTIDIG DIAGNOSE — rulles tilbage så snart fejlen er fundet.
+    return json(
+      { diag: String(err), stack: err instanceof Error ? err.stack : undefined },
+      { status: 500, headers: corsHeaders(origin) },
+    );
   }
 }
 
