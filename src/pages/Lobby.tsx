@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Swords, Trophy, UserPlus, Users } from "lucide-react";
+import { LogOut, Swords, Trophy, UserPlus, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -13,6 +13,7 @@ import {
   getCurrentLobby,
   getMe,
   joinLobby,
+  leaveLobby,
   reportLobbyMatch,
   type LobbyMatch,
   type LobbyState,
@@ -276,9 +277,25 @@ export function Lobby() {
                       <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" /> Meld mig til stede
                     </Button>
                   ) : (
-                    <p className="rounded-lg border-2 border-emerald-500 bg-emerald-100 px-3 py-1.5 text-sm font-bold">
-                      ✅ Du er i lobbyen
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="rounded-lg border-2 border-emerald-500 bg-emerald-100 px-3 py-1.5 text-sm font-bold">
+                        ✅ Du er i lobbyen
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={busy}
+                        onClick={() =>
+                          void run(
+                            () => leaveLobby(lobby.id),
+                            "Du er meldt fra lobbyen.",
+                          )
+                        }
+                        className="border-2 border-ink text-ink hover:bg-ink hover:text-cream"
+                      >
+                        <LogOut className="mr-1 h-4 w-4" aria-hidden="true" /> Meld mig fra
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
