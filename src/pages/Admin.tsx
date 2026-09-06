@@ -335,10 +335,10 @@ export function Admin() {
       const res = await adminSyncRankRoles(key);
       const parts = [
         res.assigned.length > 0
-          ? `Tildelt: ${res.assigned.map((a) => `#${a.rank} ${a.gamertag}`).join(", ")}.`
+          ? `Tildelt: ${res.assigned.map((a) => `${a.game} #${a.rank} ${a.gamertag}`).join(", ")}.`
           : "Ingen nye roller tildelt.",
         res.removed.length > 0
-          ? `Fjernet: ${res.removed.map((r) => `#${r.rank} ${r.gamertag}`).join(", ")}.`
+          ? `Fjernet: ${res.removed.map((r) => `${r.game} #${r.rank} ${r.gamertag}`).join(", ")}.`
           : "",
       ];
       if (res.skipped.length > 0) parts.push(`Sprunget over: ${res.skipped.join(" · ")}`);
@@ -859,10 +859,11 @@ export function Admin() {
 
               {/* Rang-roller */}
               <div className="rounded-xl border-2 border-ink bg-cream p-5 shadow-poster-sm">
-                <h3 className="font-heading font-bold">Rang-roller på Discord (top 8)</h3>
+                <h3 className="font-heading font-bold">Rang-roller på Discord (top 8 pr. spil)</h3>
                 <p className="mt-1 text-sm text-ink/60">
-                  Giver rollerne #1–#8 til ranglistens top 8 og fjerner dem igen
-                  fra dem der ryger ud. Kører automatisk hvert kvartal — brug
+                  Giver rollerne #1–#8 i Melee, Ultimate og Rivals 2 til hver ranglistes
+                  top 8 og fjerner dem igen fra dem der ryger ud. En spiller kan have
+                  roller i flere spil. Kører automatisk hvert kvartal — brug
                   knappen her til at gen-synke med det samme.
                 </p>
                 <Button
