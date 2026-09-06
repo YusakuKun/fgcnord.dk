@@ -30,7 +30,7 @@ const ULTIMATE_STAGES: StrikeStage[] = [
   { id: "sv", name: "Smashville", image: "/stage-thumbs/smashville.png", starter: true },
   // Counterpicks
   { id: "tc", name: "Town & City", image: "/stage-thumbs/town-&-city.png", starter: false },
-  { id: "hb", name: "Hollow Bastion", image: "", starter: false },
+  { id: "hb", name: "Hollow Bastion", image: "/stage-thumbs/hollow-bastion.png", starter: false },
   { id: "kalos", name: "Kalos Pokémon League", image: "/stage-thumbs/kalos-pokemon-league.png", starter: false },
 ];
 
@@ -100,15 +100,15 @@ const GAME_CONFIG: Record<
     label: "Ultimate",
     bans: 3,
     stages: ULTIMATE_STAGES,
-    banner: "/stage-strike-banner-ultimate.jpg?v=2",
-    bannerAlt: "Flydende platform-stages i dagslys over nordiske bjerge",
+    banner: "/stage-strike-banner-ultimate.jpg?v=3",
+    bannerAlt: "Battlefield-staget fra Ultimate i dagslys",
   },
   melee: {
     label: "Melee",
     bans: 1,
     stages: MELEE_STAGES,
-    banner: "/stage-strike-banner.jpg?v=2",
-    bannerAlt: "Nordlys over flydende platform-stages om natten",
+    banner: "/stage-strike-banner.jpg?v=3",
+    bannerAlt: "Battlefield-staget fra Melee med den ringede planet på nattehimlen",
   },
   mkwii: {
     label: "Mario Kart Wii",
@@ -515,7 +515,7 @@ export function StageStrike() {
               // Fallback til standard-banneret hvis et spil-banner mangler i public/
               const img = e.currentTarget;
               if (!img.src.includes("/stage-strike-banner.jpg")) {
-                img.src = "/stage-strike-banner.jpg?v=2";
+                img.src = "/stage-strike-banner.jpg?v=3";
               }
             }}
           />
