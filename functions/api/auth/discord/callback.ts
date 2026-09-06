@@ -59,6 +59,17 @@ function redirect(location: string, cookies: string[] = []): Response {
   return new Response(null, { status: 302, headers });
 }
 
+/** Midlertidig diagnose: lav en kort, URL-sikker fejlkode af en exception */
+function diagCode(prefix: string, err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err);
+  const safe = msg
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+  return safe ? `${prefix}-${safe}` : prefix;
+}
+
 /** Tjek om Discord-brugeren er på vores server (kræver bot token + guild id) */
 async function checkGuildMembership(
   ctx: ApiContext,
@@ -119,6 +130,8 @@ export async function onRequestGet(
     return redirect(withErrorParam(r, "config"), [CLEAR_STATE_COOKIE]);
   }
 
+  // Midlertidig diagnose: sporer hvilket trin der fejler
+  let step = "token";
   try {
     const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
@@ -132,12 +145,11 @@ export async function onRequestGet(
       }),
     });
     if (!tokenRes.ok) {
-      // Midlertidig diagnose: medtag Discords egen fejlkode i redirecten
-      // (fx invalid_client = forkert secret, invalid_grant = redirect_uri-mismatch)
-      let diag = `discord-${tokenRes.status}`;
+      // Medtag Discords egen fejlkode (fx invalid_client, invalid_grant)
+      let diag = `token-${tokenRes.status}`;
       try {
         const body = (await tokenRes.json()) as { error?: string };
-        if (body.error) diag = `discord-${tokenRes.status}-${body.error}`;
+        if (body.error) diag = `token-${tokenRes.status}-${body.error}`;
       } catch {
         // behold status-baseret diagnose
       }
@@ -145,13 +157,14 @@ export async function onRequestGet(
     }
     const tokenData = (await tokenRes.json()) as DiscordTokenResponse;
 
+    step = "user";
     const userRes = await fetch("https://discord.com/api/users/@me", {
       headers: {
         Authorization: `${tokenData.token_type} ${tokenData.access_token}`,
       },
     });
     if (!userRes.ok) {
-      return redirect(withErrorParam(r, "discord"), [CLEAR_STATE_COOKIE]);
+      return redirect(withErrorParam(r, `user-${userRes.status}`), [CLEAR_STATE_COOKIE]);
     }
     const user = (await userRes.json()) as DiscordUser;
 
@@ -159,6 +172,7 @@ export async function onRequestGet(
     const isMember = await checkGuildMembership(ctx, user.id);
     const now = Date.now();
 
+    step = "db";
     let player = await ctx.env.DB.prepare(
       "SELECT id, discord_id, gamertag, created_at FROM players WHERE discord_id = ?",
     )
@@ -206,6 +220,7 @@ export async function onRequestGet(
       }
     }
 
+    step = "session";
     const { cookie } = await createSession(
       ctx.env.DB,
       ctx.env.SESSION_SECRET,
@@ -213,9 +228,9 @@ export async function onRequestGet(
     );
 
     return redirect(r, [cookie, CLEAR_STATE_COOKIE]);
-  } catch {
-    // Netværks-/databasefejl → pæn fejlside frem for rå JSON
-    return redirect(withErrorParam(r, "discord"), [CLEAR_STATE_COOKIE]);
+  } catch (err) {
+    // Midlertidig diagnose: vis trin + fejlbesked i URL'en
+    return redirect(withErrorParam(r, diagCode(step, err)), [CLEAR_STATE_COOKIE]);
   }
 }
 
