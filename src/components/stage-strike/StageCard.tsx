@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Ban, Lock } from "lucide-react";
 
 import { SafeImage } from "@/components/SafeImage";
+import { StageSilhouette, hasSilhouette } from "@/components/stage-strike/StageSilhouette";
 import { cn } from "@/lib/utils";
 import type { Stage } from "@/types";
 
@@ -61,8 +62,27 @@ export function StageCard({ stage, state, onSelect, actionLabel, dsrLabel = "DSR
         state === "dsr" && "cursor-not-allowed border-olive/60"
       )}
     >
-      {/* Thumbnail eller nordlys-gradient fallback */}
-      {stage.image ? (
+      {/* Silhuet (foretrukket), ellers thumbnail, ellers nordlys-gradient */}
+      {hasSilhouette(stage.id) ? (
+        <div
+          aria-hidden="true"
+          className={cn(
+            "absolute inset-0 bg-ink/50 transition-all duration-300",
+            dimmed && "opacity-40"
+          )}
+        >
+          <StageSilhouette
+            stageId={stage.id}
+            className={cn(
+              "p-3 text-brick-soft transition-all duration-300",
+              interactive && "group-hover:text-brick",
+              state === "picked" && "text-brick",
+              state === "dsr" && "text-cream/40",
+              (state === "striked" || state === "banned") && "text-cream/30"
+            )}
+          />
+        </div>
+      ) : stage.image ? (
         <SafeImage
           src={stage.image}
           alt={`${stage.name} stage thumbnail`}
@@ -136,9 +156,16 @@ export function StageCard({ stage, state, onSelect, actionLabel, dsrLabel = "DSR
       )}
 
       {/* Starter/Counterpick markør */}
-      {!stage.starter && state !== "banned" && state !== "striked" && (
-        <span className="absolute left-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brick-soft">
-          Counter
+      {state !== "banned" && state !== "striked" && (
+        <span
+          className={cn(
+            "absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+            stage.starter
+              ? "bg-brick/90 text-ink"
+              : "bg-ink/70 text-brick-soft"
+          )}
+        >
+          {stage.starter ? "Starter" : "Counter"}
         </span>
       )}
 
