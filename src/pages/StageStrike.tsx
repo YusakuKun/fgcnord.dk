@@ -12,6 +12,7 @@ import { useRef, useState } from "react";
 
 import { RevealOverlay } from "@/components/stage-strike/RevealOverlay";
 import { StageCard, type CardState } from "@/components/stage-strike/StageCard";
+import { StageSilhouette, hasSilhouette } from "@/components/stage-strike/StageSilhouette";
 import { AccordionItem } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -513,17 +514,37 @@ export function StageStrike() {
             transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
             className="absolute inset-0"
           >
-            <img
-              src={config.banner}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full scale-110 object-cover blur-xl"
-            />
-            <img
-              src={config.banner}
-              alt={config.bannerAlt}
-              className="absolute inset-0 h-full w-full object-contain"
-            />
+            {config.stages.some((s) => hasSilhouette(s.id)) ? (
+              /* Minimalistisk banner: spillets baner som silhuet-række */
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center gap-6 px-8 opacity-60 sm:gap-10"
+              >
+                {config.stages
+                  .filter((s) => hasSilhouette(s.id))
+                  .map((s) => (
+                    <StageSilhouette
+                      key={s.id}
+                      stageId={s.id}
+                      className="relative hidden h-full w-full max-w-[220px] text-brick-soft/50 first:flex last:hidden sm:flex sm:last:flex md:max-w-[260px]"
+                    />
+                  ))}
+              </div>
+            ) : (
+              <>
+                <img
+                  src={config.banner}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 h-full w-full scale-110 object-cover blur-xl"
+                />
+                <img
+                  src={config.banner}
+                  alt={config.bannerAlt}
+                  className="absolute inset-0 h-full w-full object-contain"
+                />
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
         <div
