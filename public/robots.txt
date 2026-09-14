@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# 🎵 Psst... TO'erne gemmer pausemusikken her — men lad være med at fortælle det til crawlerne.
+Disallow: /pausemusik
+
 Sitemap: https://fgcnord.dk/sitemap.xml

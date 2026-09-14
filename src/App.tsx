@@ -8,6 +8,7 @@ import Galleri from "@/pages/Galleri";
 import { Home } from "@/pages/Home";
 import { Lobby } from "@/pages/Lobby";
 import { Om } from "@/pages/Om";
+import { PauseMusik } from "@/pages/PauseMusik";
 import { Placeholder } from "@/pages/Placeholder";
 import { Rangliste } from "@/pages/Rangliste";
 import { StageStrike } from "@/pages/StageStrike";
@@ -35,6 +36,7 @@ function App() {
         <Route path="galleri" element={<Galleri />} />
         <Route path="bliv-medlem" element={<BlivMedlem />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="pausemusik" element={<PauseMusik />} />
         <Route path="*" element={<Placeholder />} />
       </Route>
     </Routes>
