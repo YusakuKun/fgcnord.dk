@@ -662,7 +662,7 @@ export function Admin() {
                 type="datetime-local"
                 value={startAt}
                 onChange={(e) => setStartAt(e.target.value)}
-                className="mt-1 w-full rounded-lg border-2 border-ink bg-cream px-4 py-2.5 shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
+                className="mt-1 w-full rounded-lg border-2 border-ink bg-cream px-4 py-2.5 font-bold shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
               />
               {startAt && (
                 <p className="mt-1 text-xs text-ink/60">
