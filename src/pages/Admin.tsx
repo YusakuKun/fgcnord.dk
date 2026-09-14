@@ -8,6 +8,7 @@ import {
   Gamepad2,
   KeyRound,
   Megaphone,
+  Music4,
   Play,
   Plus,
   QrCode,
@@ -469,14 +470,26 @@ export function Admin() {
         title="LazyTO-kontrolpanel"
         description="Turneringer oprettet her lander automatisk på Discord med join-link og QR."
       >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={forgetKey}
-          className="mt-4 border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-cream"
-        >
-          <Trash2 className="mr-1 h-4 w-4" aria-hidden="true" /> Glem nøgle
-        </Button>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={forgetKey}
+            className="border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-cream"
+          >
+            <Trash2 className="mr-1 h-4 w-4" aria-hidden="true" /> Glem nøgle
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-cream"
+          >
+            <Link to="/pausemusik" title="🥚 Pausemusik">
+              <Music4 className="mr-1 h-4 w-4" aria-hidden="true" /> Pausemusik
+            </Link>
+          </Button>
+        </div>
       </PageHeader>
 
       <section className="section-padding bg-cream">
