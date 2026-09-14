@@ -485,8 +485,8 @@ export function Admin() {
             size="sm"
             className="border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-cream"
           >
-            <Link to="/pausemusik" title="🥚 Pausemusik">
-              <Music4 className="mr-1 h-4 w-4" aria-hidden="true" /> Pausemusik
+            <Link to="/pausemusik" title="🥚 Emil i top 8">
+              <Music4 className="mr-1 h-4 w-4" aria-hidden="true" /> Emil i top 8
             </Link>
           </Button>
         </div>
@@ -648,7 +648,7 @@ export function Admin() {
               <select
                 value={format}
                 onChange={(e) => setFormat(e.target.value)}
-                className="mt-1 w-full rounded-lg border-2 border-ink bg-cream px-4 py-2.5 font-bold shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
+                className="mt-1 w-full rounded-lg border-2 border-ink bg-cream px-4 py-2.5 shadow-poster-sm outline-none focus:ring-2 focus:ring-brick"
               >
                 <option value="double_elim">Double Elimination</option>
                 <option value="single_elim">Single Elimination</option>
