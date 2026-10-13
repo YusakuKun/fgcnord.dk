@@ -147,7 +147,7 @@ export function Navbar() {
           ))}
           <NavLink
             to="/bliv-medlem"
-            className="whitespace-nowrap rounded-full border-[3px] border-ink bg-brick px-5 py-2 text-[15px] font-semibold uppercase tracking-[0.02em] text-ink shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-brick-soft hover:shadow-poster"
+            className="whitespace-nowrap rounded-full border-[3px] border-ink bg-signal px-5 py-2 text-[15px] font-semibold uppercase tracking-[0.02em] text-cream shadow-poster-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-signal-dark hover:shadow-poster"
           >
             Bliv medlem
           </NavLink>

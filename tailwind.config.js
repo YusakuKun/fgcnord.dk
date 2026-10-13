@@ -11,6 +11,8 @@ export default {
         olive: "#51512A",
         brick: "#00AEEF",
         "brick-soft": "#4FC3F7",
+        signal: { DEFAULT: "#E60012", dark: "#B3000E" },
+        gold: "#FFB300",
         coal: "#0A1E3C",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { Sparkle } from "@/components/Sparkle";
-import { WaveDivider } from "@/components/WaveDivider";
+import { SlashDivider } from "@/components/SlashDivider";
 import { SectionHeader } from "@/components/SectionHeader";
 import { EventCard } from "@/components/EventCard";
 import { CTASection } from "@/components/CTASection";
@@ -107,20 +107,27 @@ export function Home() {
             >
               Fighting Game Community Nordjylland
             </motion.p>
-            <h1 className="mt-5 font-display text-[42px] uppercase leading-[1.02] tracking-[-0.02em] text-cream sm:text-[56px] md:text-[80px] lg:text-[88px]">
+            <h1 className="text-shadow-stack mt-5 font-display text-[42px] uppercase leading-[1.02] tracking-[-0.02em] text-cream sm:text-[56px] md:text-[80px] lg:text-[88px]">
               {"VI SES I BRACKET".split(" ").map((ord, i) => (
-                <span key={i} className="inline-block overflow-hidden align-bottom">
-                  <motion.span
-                    className="inline-block"
-                    initial={from({ y: "110%" })}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.7, ease: EASE, delay: reduced ? 0 : 0.15 + i * 0.08 }}
-                  >
-                    {ord}&nbsp;
-                  </motion.span>
-                </span>
+                <motion.span
+                  key={i}
+                  className="inline-block"
+                  initial={from({ y: 42, opacity: 0 })}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.7, ease: EASE, delay: reduced ? 0 : 0.15 + i * 0.08 }}
+                >
+                  {ord}&nbsp;
+                </motion.span>
               ))}
             </h1>
+            {/* Brick-skråstreg under overskriften (Poster Brutalism) */}
+            <motion.div
+              initial={from({ scaleX: 0 })}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.5, ease: EASE, delay: reduced ? 0 : 0.65 }}
+              className="mt-7 h-[10px] w-[min(360px,72%)] origin-left -skew-x-[30deg] bg-brick md:h-[14px]"
+              aria-hidden="true"
+            />
             <motion.p
               initial={from({ opacity: 0, y: 20 })}
               animate={{ opacity: 1, y: 0 }}
@@ -219,27 +226,26 @@ export function Home() {
         </motion.a>
       </section>
 
-      {/* 1b. MARQUEE-TICKER (Cool Shirtz-energi) */}
-      <div
-        className="overflow-hidden border-y-[3px] border-ink bg-brick py-3"
-        aria-hidden="true"
-      >
-        <div className="flex w-max animate-marquee whitespace-nowrap">
-          {[0, 1].map((dup) => (
-            <span
-              key={dup}
-              className="flex items-center font-display text-[16px] uppercase tracking-[0.08em] text-ink md:text-[18px]"
-            >
-              {["Melee", "Ultimate", "Rivals of Aether 2", "Mario Kart Wii", "Weeklies i Aalborg", "Grassroots", "Nordjylland", "Alle niveauer"].map(
-                (ord) => (
-                  <span key={ord} className="flex items-center">
-                    <span className="px-5">{ord}</span>
-                    <span className="text-[13px]">✦</span>
-                  </span>
-                )
-              )}
-            </span>
-          ))}
+      {/* 1b. MARQUEE-TICKER — skrå tape-strimmel (Poster Brutalism) */}
+      <div className="overflow-x-clip" aria-hidden="true">
+        <div className="-mx-[2%] w-[104%] -rotate-[1.1deg] overflow-hidden border-y-[3px] border-ink bg-brick py-3">
+          <div className="flex w-max animate-marquee whitespace-nowrap">
+            {[0, 1].map((dup) => (
+              <span
+                key={dup}
+                className="flex items-center font-display text-[16px] uppercase tracking-[0.08em] text-ink md:text-[18px]"
+              >
+                {["Melee", "Ultimate", "Rivals of Aether 2", "Mario Kart Wii", "Weeklies i Aalborg", "Grassroots", "Nordjylland", "Alle niveauer"].map(
+                  (ord) => (
+                    <span key={ord} className="flex items-center">
+                      <span className="px-5">{ord}</span>
+                      <span className="text-[13px]">✦</span>
+                    </span>
+                  )
+                )}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -293,8 +299,8 @@ export function Home() {
         </div>
       </section>
 
-      {/* 4. WAVE DIVIDER coal → cream */}
-      <WaveDivider fill="#F4F8FB" className="bg-coal" />
+      {/* 4. SLASH coal → cream */}
+      <SlashDivider fill="#F4F8FB" className="bg-coal" />
 
       {/* 5. HVAD ER FGC NORD */}
       <section className="bg-cream py-16 text-ink md:py-24">
@@ -368,14 +374,14 @@ export function Home() {
         </div>
       </section>
 
-      {/* 6. WAVE DIVIDER cream → coal */}
-      <WaveDivider fill="#0A1E3C" className="bg-cream" />
+      {/* 6. SLASH cream → coal */}
+      <SlashDivider fill="#0A1E3C" className="bg-cream" flip />
 
       {/* 7. SPILLENE — pin-sektion (GSAP ScrollTrigger, isoleret komponent) */}
       <GamesPinSection />
 
       {/* 8. GALLERI — stemninger & resultater */}
-      <WaveDivider fill="#F4F8FB" className="bg-coal" />
+      <SlashDivider fill="#F4F8FB" className="bg-coal" />
       <section className="bg-cream py-16 text-ink md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <SectionHeader eyebrow="Galleri" title="Stemninger & resultater" />
@@ -428,7 +434,7 @@ export function Home() {
           </motion.div>
         </div>
       </section>
-      <WaveDivider fill="#0A1E3C" className="bg-cream" />
+      <SlashDivider fill="#0A1E3C" className="bg-cream" flip />
 
       {/* 9. STAGE STRIKE TEASER (coal — matcher CTA-sektionens bølge) */}
       <section className="halftone-dark bg-coal py-16 text-center text-cream md:py-24">

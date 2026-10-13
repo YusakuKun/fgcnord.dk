@@ -142,6 +142,14 @@
     text-shadow: 3px 3px 0px var(--ink);
   }
 
+  /* Stak af hårde lag-skygger (brick + ink) på store display-overskrifter.
+     Kun til store headings — aldrig brødtekst (se DESIGN.md: læsbarhed først) */
+  .text-shadow-stack {
+    text-shadow:
+      0.055em 0.055em 0 var(--brick),
+      0.11em 0.11em 0 var(--ink);
+  }
+
   .card-poster {
     @apply rounded-xl border-[3px] border-ink bg-cream text-ink shadow-poster transition-all;
   }
