@@ -84,3 +84,13 @@ Rules that keep it tasteful:
 Before shipping any new visual element, ask: *"Would this look right stapled
 to a telephone pole outside the venue?"* If yes, ship it. If it looks like a
 Persona HUD screenshot, dial it back.
+
+## Posters & print graphics
+
+This language is *approved and preferred* for poster designs — event posters,
+top-8 graphics, social announcements. `design/preview-v2.png` is the
+reference comp and `design/make_preview.py` is the starting point for
+generating print/social assets (swap in Pillow drawing for the real thing,
+keep: stacked hard-shadow headlines, starburst stickers, slash edges,
+halftone on dark, rationed red/gold). When in doubt for a poster, push
+flavour harder than the website does — a poster has one job and no body copy.
