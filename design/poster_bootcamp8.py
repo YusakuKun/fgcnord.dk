@@ -22,6 +22,7 @@ from poster_lib import (
 )
 
 W, H = 1240, 1754
+CURSED = "#9B30FF"  # halloween-lilla til »cursed objects«
 
 
 def card(img, xy, w, h, fill=CREAM):
@@ -133,17 +134,23 @@ d.rectangle([670, 1154, 830, 1161], fill=RED)
 rules = [
     ("1.", "Bootcamp 8 edition: alle tildeles en"),
     ("",   "tilfældig AliExpress brainrot-trøje."),
-    ("2.", "Der er lilla loot i bunken — men også"),
-    ("",   "et par »cursed« objects."),
+    ("2.", "Der er lilla loot i bunken, men også"),
+    ("",   [("et par ", MUTED), ("cursed objects", CURSED), (".", MUTED)]),
     ("3.", "Efter trøje-draften er der mulighed"),
     ("",   "for at bytte."),
     ("4.", "Trøjen bæres synligt under ALLE dine"),
-    ("",   "sets. Ingen trøje over."),
+    ("",   "sets."),
 ]
 ry = 1185
 for num, line in rules:
     d.text((668, ry), num, font=f_cb, fill=RED)
-    d.text((712, ry), line, font=f_cb, fill=MUTED)
+    if isinstance(line, list):
+        sx = 712
+        for seg_text, seg_col in line:
+            d.text((sx, ry), seg_text, font=f_cb, fill=seg_col)
+            sx += f_cb.getlength(seg_text)
+    else:
+        d.text((712, ry), line, font=f_cb, fill=MUTED)
     ry += 26
 
 # --- venstre under billedet: ÆRE & SKAM ---
