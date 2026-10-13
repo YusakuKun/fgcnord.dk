@@ -1,7 +1,8 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { Layout } from "@/components/Layout";
 import { AuthProvider } from "@/lib/auth";
+import { TEST_EVENT_ENABLED } from "@/lib/flags";
 import { Admin } from "@/pages/Admin";
 import { BlivMedlem } from "@/pages/BlivMedlem";
 import { DocPage } from "@/pages/DocPage";
@@ -14,6 +15,7 @@ import { PauseMusik } from "@/pages/PauseMusik";
 import { Placeholder } from "@/pages/Placeholder";
 import { Rangliste } from "@/pages/Rangliste";
 import { StageStrike } from "@/pages/StageStrike";
+import { TestEvent } from "@/pages/TestEvent";
 import { TournamentBracket } from "@/pages/TournamentBracket";
 import { TournamentLanding } from "@/pages/TournamentLanding";
 import { TournamentMe } from "@/pages/TournamentMe";
@@ -39,6 +41,11 @@ function App() {
         <Route path="docs/:slug" element={<DocPage />} />
         <Route path="galleri" element={<Galleri />} />
         <Route path="bliv-medlem" element={<BlivMedlem />} />
+        {/* Bjergtop 3-testside — én kontakt i src/lib/flags.ts */}
+        <Route
+          path="test"
+          element={TEST_EVENT_ENABLED ? <TestEvent /> : <Navigate to="/" replace />}
+        />
         <Route path="admin" element={<Admin />} />
         <Route path="pausemusik" element={<PauseMusik />} />
         <Route path="*" element={<Placeholder />} />
