@@ -65,7 +65,7 @@ tracked(d, (bx + 40, 500), st, f_st, GOLD, tracking=10)
 # --- calling card (P5 parody) ---
 d = ImageDraw.Draw(img)
 f_cc = font(27, GEORGIA)
-cc = "»Tag jeres værste skjorter på. Vi kommer efter jeres stocks.« — Kluns Crews"
+cc = "»Vi kommer efter jeres stocks. Trøjerne har vi allerede taget.« — Kluns Crews"
 cc_w = f_cc.getlength(cc)
 d.text(((W - cc_w) / 2 + 3, 653 + 3), cc, font=f_cc, fill=INK)
 d.text(((W - cc_w) / 2, 653), cc, font=f_cc, fill=CREAM)
@@ -117,11 +117,9 @@ f_cb = font(19)
 d.text((668, 820), "KAMPEN", font=f_ct, fill=INK)
 d.rectangle([670, 864, 780, 871], fill=BRICK)
 format_lines = [
-    "Crew battle: 2 crews à 5 spillere",
-    "3 stocks pr. spiller · 8 minutter",
-    "Vinderen bliver stående med sine",
-    "resterende stocks — næste spiller op",
-    "Live skjorte-draft inden kampstart",
+    "Crews, vælg dit slæng!",
+    "Crews af 2 · Bo3 · 3 stocks · 8 min",
+    "Skjorte-draft foregår før pools",
     "Standard RoA2-ruleset + DSR",
 ]
 for i, line in enumerate(format_lines):
@@ -131,17 +129,14 @@ card(img, (640, 1090), 545, 380)
 d.text((668, 1110), "SKJORTELOVEN", font=f_ct, fill=INK)
 d.rectangle([670, 1154, 830, 1161], fill=RED)
 rules = [
-    ("1.", "Meld én kluns til tjeneste — din"),
-    ("",   "værste skjorte ryger i bunken."),
-    ("2.", "Har du ikke bragt en, vidste du det"),
-    ("",   "ikke, eller har du ikke lyst? En til-"),
-    ("",   "fældig kluns fra bunken tildeles dig."),
-    ("3.", "Skjorten bæres synligt under ALLE"),
-    ("",   "dine sets. Ingen trøje over."),
-    ("4.", "Kaptajnerne drafter skjorter live —"),
-    ("",   "ikke spillere."),
-    ("5.", "Byttehandel er forbudt. Du og"),
-    ("",   "skjorten. Sammen. Til ende."),
+    ("1.", "Bootcamp 8 edition: alle tildeles en"),
+    ("",   "tilfældig AliExpress brainrot-trøje."),
+    ("2.", "Der er lilla loot i bunken — men også"),
+    ("",   "et par »cursed« objects."),
+    ("3.", "Efter trøje-draften er der mulighed"),
+    ("",   "for at bytte."),
+    ("4.", "Trøjen bæres synligt under ALLE dine"),
+    ("",   "sets. Ingen trøje over."),
 ]
 ry = 1185
 for num, line in rules:
@@ -171,7 +166,7 @@ d.polygon([(0, band_y), (W, band_y - 24), (W, H), (0, H)], fill=CREAM)
 d.line(zigzag_points(0, band_y - 14, W, band_y - 38, teeth=12, amp=8),
        fill=BRICK, width=6)
 f_p = font(24)
-d.text((60, band_y + 12), "DATO: TBA · AALBORG · GRATIS ENTRÉ", font=f_p, fill=INK)
+d.text((60, band_y + 12), "LØR. 17. OKT · KIBÆK/HERNING · BOOTCAMP 8", font=f_p, fill=INK)
 f_u = font(24)
 u = "FGCNORD.DK"
 d.text((W - 60 - f_u.getlength(u), band_y + 12), u, font=f_u, fill=BRICK)
