@@ -162,8 +162,7 @@ prize_lines = [
     "næste skjorte-draft",
     [("Årets Kluns", GOLD), (" — værste skjorte,", MUTED)],
     "publikumsafstemning på Discord",
-    "Tabercrew: foto på Skamvæggen,",
-    "i skjortene. For evigt.",
+    "Ude af losers? Photo på skamvæggen!",
 ]
 for i, line in enumerate(prize_lines):
     if isinstance(line, list):
