@@ -21,3 +21,5 @@ migrations_dir = "functions/migrations"
 # - DISCORD_CLIENT_ID                  # OAuth app client ID (optional)
 # - DISCORD_CLIENT_SECRET              # OAuth app secret (optional)
 # - DISCORD_REDIRECT_URI               # e.g. https://fgcnord.dk/api/auth/discord/callback
+# - NOTION_TOKEN                       # Notion integration-token (docs-CMS på /docs)
+# - NOTION_DOCS_DB_ID                  # valgfri — ellers auto-opslag på database-titel

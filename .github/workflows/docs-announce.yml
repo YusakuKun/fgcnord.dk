@@ -1,0 +1,17 @@
+name: Annoncér nye guides (daglig)
+
+on:
+  schedule:
+    - cron: "23 16 * * *" # dagligt kl. 16:23 UTC
+  workflow_dispatch:
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kald announce-docs-endpoint
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}" \
+            "https://fgcnord.dk/api/admin/announce-docs?hours=26")
+          if [ "$code" != "200" ]; then echo "::error::Annoncering fejlede med HTTP $code"; exit 1; fi

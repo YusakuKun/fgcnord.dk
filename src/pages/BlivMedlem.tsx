@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { CTASection } from "@/components/CTASection";
+import { DiscordWidget } from "@/components/DiscordWidget";
 import { DISCORD_URL, DiscordIcon } from "@/components/Navbar";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -338,6 +339,9 @@ export function BlivMedlem() {
 
             <div className="lg:sticky lg:top-24">
               <DiscordAuthCard />
+              <div className="mt-6">
+                <DiscordWidget />
+              </div>
               <div className="mt-6 grid grid-cols-3 gap-3 text-center">
                 {[
                   { icon: Users, label: "50+ spillere" },

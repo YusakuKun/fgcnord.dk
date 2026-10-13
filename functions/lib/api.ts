@@ -17,6 +17,10 @@ export interface Env {
   DISCORD_PING_ROLE_ID?: string;
   /** start.gg API-token (Developer Settings på start.gg) */
   STARTGG_API_TOKEN?: string;
+  /** Notion integration-token til docs-CMS (fgcnord.dk/docs) */
+  NOTION_TOKEN?: string;
+  /** Valgfri: id på FGCNORD Admin Docs-databasen (ellers auto-opslag på titel) */
+  NOTION_DOCS_DB_ID?: string;
   // Rang-roller slås op dynamisk pr. spil og rang (se lib/ranks.ts):
   // DISCORD_MELEE_RANK_ROLE_1..8, DISCORD_ULTIMATE_RANK_ROLE_1..8, DISCORD_ROA2_RANK_ROLE_1..8
 }

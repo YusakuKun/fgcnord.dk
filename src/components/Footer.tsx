@@ -7,6 +7,7 @@ const NAV = [
   { to: "/", label: "Forside" },
   { to: "/turneringer", label: "Turneringer" },
   { to: "/stage-strike", label: "Stage Strike" },
+  { to: "/docs", label: "Guides" },
   { to: "/om", label: "Om fællesskabet" },
   { to: "/bliv-medlem", label: "Bliv medlem" },
 ];

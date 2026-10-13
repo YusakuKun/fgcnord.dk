@@ -4,6 +4,8 @@ import { Layout } from "@/components/Layout";
 import { AuthProvider } from "@/lib/auth";
 import { Admin } from "@/pages/Admin";
 import { BlivMedlem } from "@/pages/BlivMedlem";
+import { DocPage } from "@/pages/DocPage";
+import { Docs } from "@/pages/Docs";
 import Galleri from "@/pages/Galleri";
 import { Home } from "@/pages/Home";
 import { Lobby } from "@/pages/Lobby";
@@ -33,6 +35,8 @@ function App() {
         <Route path="t/:code/mig" element={<TournamentMe />} />
         <Route path="t/:code/bracket" element={<TournamentBracket />} />
         <Route path="om" element={<Om />} />
+        <Route path="docs" element={<Docs />} />
+        <Route path="docs/:slug" element={<DocPage />} />
         <Route path="galleri" element={<Galleri />} />
         <Route path="bliv-medlem" element={<BlivMedlem />} />
         <Route path="admin" element={<Admin />} />
