@@ -63,6 +63,7 @@ export default {
         heading: ['"Bricolage Grotesque"', "sans-serif"],
         sans: ["Inter", "sans-serif"],
         body: ["Inter", "sans-serif"],
+        impact: ["Impact", '"Archivo Black"', "sans-serif"],
       },
       boxShadow: {
         poster: "6px 6px 0 #141413",

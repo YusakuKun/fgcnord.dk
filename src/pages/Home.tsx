@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { Sparkle } from "@/components/Sparkle";
+import { RansomText } from "@/components/RansomText";
 import { SlashDivider } from "@/components/SlashDivider";
 import { SectionHeader } from "@/components/SectionHeader";
 import { EventCard } from "@/components/EventCard";
@@ -107,18 +108,8 @@ export function Home() {
             >
               Fighting Game Community Nordjylland
             </motion.p>
-            <h1 className="text-shadow-stack mt-5 font-display text-[42px] uppercase leading-[1.02] tracking-[-0.02em] text-cream sm:text-[56px] md:text-[80px] lg:text-[88px]">
-              {"VI SES I BRACKET".split(" ").map((ord, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block"
-                  initial={from({ y: 42, opacity: 0 })}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.7, ease: EASE, delay: reduced ? 0 : 0.15 + i * 0.08 }}
-                >
-                  {ord}&nbsp;
-                </motion.span>
-              ))}
+            <h1 className="mt-5 font-display text-[42px] uppercase leading-[1.2] tracking-[-0.02em] text-cream sm:text-[56px] md:text-[72px] lg:text-[80px]">
+              <RansomText text="VI SES I BRACKET" delay={reduced ? 0 : 0.15} />
             </h1>
             {/* Brick-skråstreg under overskriften (Poster Brutalism) */}
             <motion.div
