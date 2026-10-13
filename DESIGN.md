@@ -94,3 +94,32 @@ generating print/social assets (swap in Pillow drawing for the real thing,
 keep: stacked hard-shadow headlines, starburst stickers, slash edges,
 halftone on dark, rationed red/gold). When in doubt for a poster, push
 flavour harder than the website does — a poster has one job and no body copy.
+
+## Persona 5 — the actual rules (from Atlus' official P5 style guide)
+
+Source: Atlus' internal P5 style guide (publicly mirrored at
+segaretro.org/images/d/d0/Persona5_StyleGuide.pdf; local copy at
+`design/p5-styleguide.pdf`, gitignored — not ours to redistribute).
+These are their rules, translated to our palette:
+
+**Typography — "ransom note" (their #1 technique):**
+- Set headlines as if letters were cut & pasted from a newspaper
+- Mix serif + sans-serif fonts *within the same word*
+- Add an angle to each letter individually (±3–8°)
+- Box each letter individually; invert one or two letters per word
+  (dark box/light letter on light box/dark letter)
+- One letter per word may take the accent color (red)
+- Outline the whole word if it needs separation from the background
+- Skew whole words / add perspective sometimes
+- Sans-serif stays for larger bodies of text — the ransom note is for
+  headlines and short callouts only
+
+**Art & shapes:**
+- Zigzags or rips at edges — zigzags preferred over straight cuts
+- Splatters and 4-point stars "as necessary" (i.e. sparingly, with intent)
+- Big flat color fields are allowed — a whole red panel is on-brand
+- Elements overlap and break each other's frames; nothing floats politely
+
+**Translation to FGCNORD:** our coal/cream/brick base stays, but posters may
+use full red fields and ransom-note headlines — the website keeps the
+restrained version above.
