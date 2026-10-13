@@ -6,6 +6,7 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { SectionHeader } from "@/components/SectionHeader";
 import { EventCard } from "@/components/EventCard";
 import { CTASection } from "@/components/CTASection";
+import { DiscordWidget } from "@/components/DiscordWidget";
 import { GamesPinSection } from "@/components/home/GamesPinSection";
 import { HeroDecor } from "@/components/home/HeroDecor";
 import { upcomingEvents } from "@/data/events";
@@ -479,7 +480,23 @@ export function Home() {
         </div>
       </section>
 
-      {/* 9. CTA */}
+      {/* 10. DISCORD LIVE (cream — kontrast før CTA) */}
+      <section className="bg-cream py-16 text-ink md:py-20">
+        <div className="mx-auto max-w-[820px] px-6">
+          <SectionHeader eyebrow="Fællesskab" title="Der er liv på Discord" centered />
+          <motion.div
+            initial={from({ opacity: 0, y: 24 })}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="mx-auto max-w-xl"
+          >
+            <DiscordWidget />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 11. CTA */}
       <CTASection />
     </>
   );

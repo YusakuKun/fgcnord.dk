@@ -12,6 +12,18 @@ function formatDate(iso: string): string {
   });
 }
 
+/** Matcher docs-coverne i Notion (samme farve pr. kategori). */
+const CATEGORY_COLORS: Record<string, string> = {
+  Streaming: "#00AEEF",
+  Brackets: "#FBBF24",
+  Operations: "#34D399",
+  People: "#E57373",
+};
+
+function categoryColor(category: string): string {
+  return CATEGORY_COLORS[category] ?? "#00AEEF";
+}
+
 /** /docs — udgivne guides fra Notion (kun Status = Published). */
 export function Docs() {
   const [docs, setDocs] = useState<DocSummary[] | null>(null);
@@ -57,7 +69,14 @@ export function Docs() {
                 to={`/docs/${doc.slug}`}
                 className="group flex flex-col rounded-xl border-2 border-ink bg-white p-6 shadow-poster transition-transform duration-200 hover:-translate-y-1"
               >
-                <span className="inline-block w-fit rounded-full bg-brick px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
+                <span
+                  className="mb-3 h-1.5 w-10 rounded-full"
+                  style={{ backgroundColor: categoryColor(doc.category) }}
+                />
+                <span
+                  className="inline-block w-fit rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white"
+                  style={{ backgroundColor: categoryColor(doc.category) }}
+                >
                   {doc.category}
                 </span>
                 <h2 className="mt-3 font-heading text-xl font-bold text-ink group-hover:text-brick">
