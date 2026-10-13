@@ -118,15 +118,22 @@ f_cb = font(19)
 d.text((668, 820), "KAMPEN", font=f_ct, fill=INK)
 d.rectangle([670, 864, 780, 871], fill=BRICK)
 format_lines = [
-    "Crews, vælg dit slæng!",
-    "Runback med din duo-makker mod",
-    "modstanderparret — i 1v1-format",
+    "Crews, Doubles.",
+    "Runback med din duo, eller prøv",
+    "en ny fræk ting 👀",
     "Crews af 2 · Bo3 · 3 stocks · 8 min",
     "Skjorte-draft foregår før pools",
     "Standard RoA2-ruleset + DSR",
 ]
+f_emoji = font(19, "C:/Windows/Fonts/seguiemj.ttf")
 for i, line in enumerate(format_lines):
-    d.text((668, 892 + i * 28), line, font=f_cb, fill=MUTED)
+    if "👀" in line:
+        txt = line.replace(" 👀", "")
+        d.text((668, 892 + i * 28), txt, font=f_cb, fill=MUTED)
+        d.text((668 + f_cb.getlength(txt) + 8, 892 + i * 28 - 2),
+               "👀", font=f_emoji, fill=MUTED, embedded_color=True)
+    else:
+        d.text((668, 892 + i * 28), line, font=f_cb, fill=MUTED)
 
 card(img, (640, 1090), 545, 380)
 d.text((668, 1110), "SKJORTELOVEN", font=f_ct, fill=INK)
@@ -180,13 +187,9 @@ d.polygon([(0, band_y), (W, band_y - 24), (W, H), (0, H)], fill=CREAM)
 d.line(zigzag_points(0, band_y - 14, W, band_y - 38, teeth=12, amp=8),
        fill=BRICK, width=6)
 f_p = font(24)
-d.text((60, band_y + 12), "LØR. 17. OKT · KIBÆK/HERNING · BOOTCAMP 8", font=f_p, fill=INK)
-f_u = font(24)
-u = "FGCNORD.DK"
-d.text((W - 60 - f_u.getlength(u), band_y + 12), u, font=f_u, fill=BRICK)
-f_s = font(15)
-credit = "Persona 5 × Rivals of Aether 2 crossover · Bootcamp 8-tema (Kibæk/Herning)"
-d.text((60, band_y + 44), credit, font=f_s, fill=MUTED)
+band_txt = "LØR. 17. OKT · KIBÆK/HERNING · BOOTCAMP 8"
+d.text(((W - f_p.getlength(band_txt)) / 2, band_y + 22), band_txt,
+       font=f_p, fill=INK)
 
 img_rgb = img.convert("RGB")
 img_rgb.save("design/kluns-crews-bootcamp8.png")
