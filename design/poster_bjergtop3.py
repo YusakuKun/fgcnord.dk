@@ -75,11 +75,11 @@ d.text((63, 43), "FGCNORD", font=f_wm, fill=BRICK)
 d.text((58, 38), "FGCNORD", font=f_wm, fill=CREAM)
 
 # --- starburst top-right (the one red element) ---
-starburst(img, (955, 125), "SNART", RED, CREAM, size=30, rot=9)
+starburst(img, (990, 82), "SNART", RED, CREAM, size=26, rot=9)
 
 # --- eyebrow ---
 f_eb = font(26)
-eb = "FGCNORD PRÆSENTERER"
+eb = "FGCNORD PRÆSENTERER ET TOPPMØDE"
 tracked(d, ((W - tracked_width(eb, f_eb, 8)) / 2, 210), eb, f_eb, BRICK_SOFT, tracking=8)
 
 # --- headline: BJERGTOP, stacked shadows, centered ---
@@ -121,7 +121,7 @@ dt.rectangle([0, 0, W + 119, 65], fill=INK)
 dt.rectangle([0, 0, W + 119, 5], fill=CREAM)
 dt.rectangle([0, 60, W + 119, 65], fill=CREAM)
 f_t = font(24)
-ticker = " MELEE /// ULTIMATE /// RIVALS OF AETHER 2 /// MARIO KART WII ///"
+ticker = " 16 SPILLERE /// INVITATIONAL /// 4 PLADSER PÅ FOLKEAFSTEMNING /// MELEE /// ULTIMATE /// ROA2 /// MK WII ///"
 x = 0
 while x < W + 120:
     dt.text((x, 19), ticker, font=f_t, fill=CREAM)
@@ -135,11 +135,11 @@ d.polygon([(0, 1112), (W, 1058), (W, H), (0, H)], fill=CREAM)
 d.polygon([(0, 1100), (W, 1046), (W, 1058), (0, 1112)], fill=BRICK)
 
 d.text((70, 1180), "DATO: TBA", font=font(52), fill=INK)
-d.text((70, 1258), "AALBORG · LOKALE ANNONCERES", font=font(24), fill=MUTED)
+d.text((70, 1258), "INVITATIONAL · AALBORG · LOKALE ANNONCERES", font=font(24), fill=MUTED)
 f_url = font(28)
 u = "FGCNORD.DK"
 d.text((W - 70 - f_url.getlength(u), 1288), u, font=f_url, fill=BRICK)
 halftone(d, (0, 1300, W, H), "#DCE5EF", step=28, r=2)
 
-img.convert("RGB").save("design/poster-bjergtop-3.png")
-print("wrote design/poster-bjergtop-3.png")
+img.convert("RGB").save("design/poster-bjergtop-3-v2.png")
+print("wrote design/poster-bjergtop-3-v2.png")
