@@ -65,7 +65,7 @@ tracked(d, (bx + 40, 500), st, f_st, GOLD, tracking=10)
 # --- calling card (P5 parody) ---
 d = ImageDraw.Draw(img)
 f_cc = font(27, GEORGIA)
-cc = "»Vi kommer efter jeres stocks. Trøjerne har vi allerede taget.« — Kluns Crews"
+cc = "»I tabte sidst — nu tager I revanche. To mod to, én mod én.« — Kluns Crews"
 cc_w = f_cc.getlength(cc)
 d.text(((W - cc_w) / 2 + 3, 653 + 3), cc, font=f_cc, fill=INK)
 d.text(((W - cc_w) / 2, 653), cc, font=f_cc, fill=CREAM)
@@ -99,8 +99,8 @@ for i in range(22):
             (cx_a + r1 * math.cos(ang), cy_a + r1 * math.sin(ang))],
            fill=col, width=4)
 img.alpha_composite(frame, (art_x, art_y))
-starburst(img, (art_x + 95, art_y + 40), "TAKE YOUR SHIRT!", RED, CREAM,
-          size=11, rot=-10, spikes=16)
+starburst(img, (art_x + 130, art_y + 30), "DUOS SALTY SUITE!?!\n...men i 1v1??",
+          RED, CREAM, size=13, rot=-10, spikes=16)
 d = ImageDraw.Draw(img)
 splatter(d, art_x + art_w + 60, art_y + art_h - 20, 14, BRICK)
 sparkle(d, art_x + art_w + 90, art_y - 10, 14, GOLD)
@@ -118,6 +118,8 @@ d.text((668, 820), "KAMPEN", font=f_ct, fill=INK)
 d.rectangle([670, 864, 780, 871], fill=BRICK)
 format_lines = [
     "Crews, vælg dit slæng!",
+    "Runback med din duo-makker mod",
+    "modstanderparret — i 1v1-format",
     "Crews af 2 · Bo3 · 3 stocks · 8 min",
     "Skjorte-draft foregår før pools",
     "Standard RoA2-ruleset + DSR",

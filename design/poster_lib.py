@@ -57,9 +57,13 @@ def splatter(draw, cx, cy, r, color):
 
 
 def starburst(base, center, text, bg, fg, size=26, rot=9, spikes=14):
-    """P5 starburst sticker with hard ink shadow, rotated as one layer."""
+    """P5 starburst sticker, rotated as one layer. Text: \n for multi-line."""
     f = font(size)
-    r_out = int(max(f.getlength(text), size) * 0.82) + 26
+    lines = text.split("\n")
+    widest = max(f.getlength(ln) for ln in lines)
+    r_out = int(max(widest, size) * 0.82) + 26
+    line_h = int(size * 1.15)
+    r_out += int((len(lines) - 1) * line_h * 0.6)  # grow for extra lines
     r_in = int(r_out * 0.76)
     S = r_out * 2 + 30
     s = Image.new("RGBA", (S, S), (0, 0, 0, 0))
@@ -72,9 +76,12 @@ def starburst(base, center, text, bg, fg, size=26, rot=9, spikes=14):
             r = r_out if i % 2 == 0 else r_in
             pts.append((cx + dx + r * math.cos(ang), cy + dy + r * math.sin(ang)))
         d.polygon(pts, fill=col)
-    bbox = d.textbbox((0, 0), text, font=f)
-    d.text((cx - (bbox[0] + bbox[2]) / 2, cy - (bbox[1] + bbox[3]) / 2),
-           text, font=f, fill=fg)
+    total_h = line_h * len(lines)
+    for i, ln in enumerate(lines):
+        bbox = d.textbbox((0, 0), ln, font=f)
+        d.text((cx - (bbox[0] + bbox[2]) / 2,
+                cy - total_h / 2 + i * line_h - bbox[1]),
+               ln, font=f, fill=fg)
     s = s.rotate(rot, expand=True, resample=Image.BICUBIC)
     base.alpha_composite(s, (int(center[0] - s.width / 2), int(center[1] - s.height / 2)))
 
