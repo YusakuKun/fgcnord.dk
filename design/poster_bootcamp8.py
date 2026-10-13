@@ -160,13 +160,19 @@ d.rectangle([90, 1274, 220, 1281], fill=GOLD)
 prize_lines = [
     "Vindercrew: æren + førstevalg i",
     "næste skjorte-draft",
-    "»Årets Kluns« — værste skjorte,",
+    [("Årets Kluns", GOLD), (" — værste skjorte,", MUTED)],
     "publikumsafstemning på Discord",
     "Tabercrew: foto på Skamvæggen,",
     "i skjortene. For evigt.",
 ]
 for i, line in enumerate(prize_lines):
-    d.text((88, 1302 + i * 28), line, font=f_cb, fill=MUTED)
+    if isinstance(line, list):
+        sx = 88
+        for seg_text, seg_col in line:
+            d.text((sx, 1302 + i * 28), seg_text, font=f_cb, fill=seg_col)
+            sx += f_cb.getlength(seg_text)
+    else:
+        d.text((88, 1302 + i * 28), line, font=f_cb, fill=MUTED)
 
 # --- bottom band ---
 band_y = 1680
