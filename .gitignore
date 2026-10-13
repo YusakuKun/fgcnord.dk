@@ -27,3 +27,4 @@ dist-ssr
 project-export/
 design/p5-styleguide.pdf
 design/bootcamp8-banner.png
+__pycache__/
