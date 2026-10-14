@@ -36,11 +36,10 @@ img = Image.new("RGBA", (W, H), COAL)
 d = ImageDraw.Draw(img)
 halftone(d, (0, 0, W, 720), "#12305C")
 
-# --- wordmark + SNART burst ---
+# --- wordmark (SNART-burst tegnes efter den røde slab, så den ikke overdækkes) ---
 f_wm = font(30)
 d.text((53, 35), "FGCNORD", font=f_wm, fill=BRICK)
 d.text((48, 30), "FGCNORD", font=f_wm, fill=CREAM)
-starburst(img, (1155, 58), "SNART", CREAM, RED, size=22, rot=9)
 
 # --- red zigzag slab + ransom headline ---
 slab = [(-80, 100), (W + 80, 30)]
@@ -48,6 +47,9 @@ slab += zigzag_points(W + 80, 545, -80, 605, teeth=14, amp=18)
 slab_ink = [(x + 14, y + 14) for x, y in slab]
 d.polygon(slab_ink, fill=INK)
 d.polygon(slab, fill=RED)
+
+# SNART-burst oven på slabbens øverste højre hjørne
+starburst(img, (1118, 122), "SNART", CREAM, RED, size=22, rot=9)
 
 f_eb = font(22)
 eb = "FGCNORD × RIVALS OF AETHER 2"
