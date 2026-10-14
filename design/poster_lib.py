@@ -161,20 +161,28 @@ def ransom(base, cx, cy, text, gap=44, scale=1.0):
 
 def tape_strip(base, y, items, bg=INK, fg=CREAM, border=CREAM, rot=-3,
                size=24, width=1440, sep=" /// "):
-    """Rotated ticker tape strip with repeated items."""
-    tape = Image.new("RGBA", (width + 120, 66), (0, 0, 0, 0))
-    dt = ImageDraw.Draw(tape)
-    dt.rectangle([0, 0, width + 119, 65], fill=bg)
-    dt.rectangle([0, 0, width + 119, 5], fill=border)
-    dt.rectangle([0, 60, width + 119, 65], fill=border)
+    """Rotated ticker tape strip. Text is shrunk to fit `width` and the
+    rotated tape is centred on the canvas, so nothing clips at the edges."""
     f = font(size)
-    ticker = sep.join(items) + sep
-    x = 0
-    while x < width + 120:
-        dt.text((x, 19), ticker, font=f, fill=fg)
-        x += int(f.getlength(ticker)) + 4
+    ticker = sep.join(items)
+    tw = f.getlength(ticker)
+    while tw > width - 60 and size > 10:
+        size -= 1
+        f = font(size)
+        tw = f.getlength(ticker)
+    rad = math.radians(abs(rot))
+    h = 66
+    # extra canvas so the rotated tape still spans [0, width] edge-to-edge
+    extra = int(width * (1 - math.cos(rad)) + h * math.sin(rad)) + 4
+    tape_w = width + extra
+    tape = Image.new("RGBA", (tape_w, h), (0, 0, 0, 0))
+    dt = ImageDraw.Draw(tape)
+    dt.rectangle([0, 0, tape_w - 1, h - 1], fill=bg)
+    dt.rectangle([0, 0, tape_w - 1, 5], fill=border)
+    dt.rectangle([0, h - 5, tape_w - 1, h - 1], fill=border)
+    dt.text(((tape_w - tw) / 2, 19), ticker, font=f, fill=fg)
     tape = tape.rotate(rot, expand=True, resample=Image.BICUBIC)
-    base.alpha_composite(tape, (-60, y))
+    base.alpha_composite(tape, (int(-extra / 2), y))
 
 
 def stacked_text(draw, xy, text, size, fg, shadow=BRICK, shadow2=INK,
